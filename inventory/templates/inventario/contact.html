@@ -1,0 +1,715 @@
+{% extends 'inventario/index.html' %}
+
+{% block title %}
+    CONTACTO - DAFC CORPORATION
+{% endblock %}
+
+{% load static %}
+
+{% block content %}
+
+    <style>
+        
+        /* Estilo para el contenedor del mapa */
+        /* Estilo para el contenedor del mapa 
+        .map-container {
+            position: relative; / Para posicionar elementos internos si es necesario *
+            width: 90%; * Ajusta el ancho del contenedor *
+            height: 60vh; / Ajusta el alto del contenedor *
+            margin: 20px auto; / Centra el contenedor y le da espacio alrededor *
+            box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3); * Sombra para destacar *
+            border-radius: 10px; / Esquinas redondeadas *
+            overflow: hidden; / Recorta bordes sobrantes del iframe /
+        }
+        */
+
+        /* Estilo para el iframe del mapa 
+        .map-container iframe {
+            width: 100%; / Ocupa todo el ancho del contenedor 
+            height: 100%; / Ocupa todo el alto del contenedor 
+            border: none; /* Sin bordes adicionales 
+        }*/
+
+        .map-container {
+            margin: 50px;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+        }
+
+        iframe {
+            width: 60%;
+            height: 400px;
+            border: 0;
+        }
+
+        .locations {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .locations h3 {
+            font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-weight: bold;
+            color: black;
+            font-size: 40px;
+        }
+
+        .locations li {
+            margin: 10px 0;
+        }
+
+        
+        .sede-item {
+            border-radius: 10px;
+            background-color: #f2f3f6;
+            padding: 15px 20px 10px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sede-name {
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .sede-subtext {
+            margin-left: 15px;
+            font-size: 0.9rem; /* Tamaño de fuente más pequeño */
+            color: #777777; /* Color de texto */
+            margin-top: 2px; /* Separación entre el texto principal y el subtítulo */
+        }
+
+        /* Estilo para el botón de abrir/cerrar información */
+        .toggle-info {
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0px 9px;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            background-color: white;  /* Fondo blanco por defecto */
+            color: black;  /* Color del texto negro por defecto */
+            font-weight: bold;
+            transition: all 0.3s ease;  /* Transición para los cambios de estilo */
+        }
+
+        .toggle-info.active {
+            background-color: black;  /* Fondo negro cuando está activo */
+            color: white;  /* Color del texto blanco cuando está activo */
+        }
+
+
+        /* Estilo adicional para mostrar la información de la sede */
+        .sede-info {
+            
+            max-height: 0; /* Altura inicial cerrada */
+            overflow: hidden; /* Oculta el contenido desbordado */
+            transition: max-height 0.5s ease, opacity 0.5s ease; /* Transiciones para la altura y la opacidad */
+            opacity: 0; /* Inicio con opacidad cero */
+            padding: 0 15px; /* Espaciado interno */
+        }
+
+        .sede-info.show {
+            max-height: 500px; /* Altura máxima (ajusta según el contenido) */
+            opacity: 1; /* Aparece */
+            padding: 10px 15px; /* Restaura el padding al abrir */
+            border: 1px solid #ddd; /* Añade un borde al abrir */
+            margin-top: 10px; /* Separación superior */
+            background-color: #f9f9f9; /* Fondo claro */
+            border-radius: 5px; /* Bordes redondeados */
+        }
+
+        .sede-info p {
+            margin: 5px 0;
+        }
+
+        .info-item {
+            margin-left: 15px;
+            display: flex;
+            align-items: center; /* Alinea verticalmente el ícono y el texto */
+            gap: 15px; /* Espaciado entre ícono y texto */
+        }
+        .info-item p{
+            font-size: 15px;
+            font-weight: 400;
+        }
+        
+        /* Contenedor desplazable */
+        .scrollable-container {
+            padding: 10px;
+            max-height: 400px; /* Altura máxima para el scroll */
+            overflow-y: auto; /* Activar desplazamiento vertical */
+        }
+
+        /* Ajustes opcionales para el scroll */
+        .scrollable-container::-webkit-scrollbar {
+            width: 5px; /* Ancho del scroll */
+        }
+
+        .scrollable-container::-webkit-scrollbar-track {
+            background: #f1f1f1; /* Fondo del track */
+        }
+
+        .scrollable-container::-webkit-scrollbar-thumb {
+            background: #bbbbbb; /* Color del scroll */
+        }
+
+        .scrollable-container::-webkit-scrollbar-thumb:hover {
+            background: #555; /* Color hover del scroll */
+        }
+
+        /* SECCION ANIMADA DE SEDES */
+        .animate-slide {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        /* Mostrar el contenedor de sedes */
+        .animate-slide.show-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mostrar las tarjetas de las sedes después */
+        .animate-slide.show-card {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animación escalonada para las tarjetas de sedes */
+        .sede-item.card-1 { transition-delay: 0.3s; } /* Aparece después de 0.9s */
+        .sede-item.card-2 { transition-delay: 0.4s; } /* Aparece después de 1.2s */
+        .sede-item.card-3 { transition-delay: 0.3s; } /* Aparece después de 1.5s */
+        .sede-item.card-4 { transition-delay: 0.4s; } /* Aparece después de 1.5s */
+
+        /*-------------------------------------------------------------------------------------------------------*/
+        /* SECCIÓN RESPONSIVA SECCCION IFRAME */
+        /* Media Query para dispositivos móviles */
+        @media (max-width: 768px) {
+            .map-container {
+                flex-direction: column;  /* Cambia a columna */
+                margin: 20px;           /* Ajusta el margen para móviles */
+            }
+            /* Coloca el contenedor de sedes antes que el mapa */
+            .scrollable-container {
+                order: -1;   /* Valor menor para que aparezca primero */
+                width: 100%;
+                margin-bottom: 20px;  /* Separación inferior */
+            }
+            iframe {
+                order: 0;
+                width: 100%;
+                height: 300px;  /* Ajusta la altura para pantallas pequeñas */
+            }
+        }
+        /*-------------------------------------------------------------------------------------------------------*/
+        /*-------------------------------------------------------------------------------------------------------*/
+        /* CSS PARA EL FORMULARIO*/
+
+        .form-label {
+            font-size: 15px;
+            font-weight: bold;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            font-size: 14px;
+            padding: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: black;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .custome-btn {
+            border: 2px solid #03447e;
+            background-color: transparent;
+            color: #03447e;
+            padding: 10px 20px;
+            font-weight: bold;
+            transition: all 0.3s;
+
+            
+        }
+
+        .custome-btn:hover {
+            background-color: #03447e;
+            color: #fff;
+        }
+
+        /*-------------------------------------------------------------------------------------------------------*/
+        /*-------------------------------------------------------------------------------------------------------*/
+
+        /* SECCION ANIMADA DEL FORMULARIO */
+        .form-slide-container {
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .form-slide-container.show-container {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .form-slide-item {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .form-slide-item.show-item {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Animación escalonada para los campos del formulario */
+        .form-slide-item:nth-child(1) { transition-delay: 0.3s; }
+        .form-slide-item:nth-child(2) { transition-delay: 0.4s; }
+        .form-slide-item:nth-child(3) { transition-delay: 0.5s; }
+        .form-slide-item:nth-child(4) { transition-delay: 0.6s; }
+        .form-slide-item:nth-child(5) { transition-delay: 0.7s; }
+        .form-slide-item:nth-child(6) { transition-delay: 0.8s; }
+        .form-slide-item:nth-child(7) { transition-delay: 0.9s; }
+        .form-slide-item:nth-child(8) { transition-delay: 1s; }
+
+
+        /* Animación del bloque de texto */
+        .text-slide-item {
+            opacity: 0;
+            transform: translateX(-50%);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .text-slide-item.show-item {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+
+        .fade-slide {
+            opacity: 0;
+            transform: translateY(-50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        /* Mostrar el contenedor cuando sea visible */
+        .fade-slide.show-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    </style>
+    <!-- Start Content Page -->
+    <div class="container-fluid bg-light py-5 fade-slide">
+        <div class="col-md-6 m-auto text-center">
+            <h1 class="h1">Comunicate con Nosotros</h1>
+            <p>
+                ¿Interesado en alguno de nuestros productos? Déjanos tus datos en el formulario y te 
+                enviaremos una cotización personalizada basada en el producto que has visto. 
+                ¡Estamos para ayudarte!
+            </p>
+        </div>
+    </div>
+
+    <div class="map-container animate-slide">
+        <!-- Mapa usando iframe -->
+        <iframe 
+            id="map"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31208.874342813713!2d-77.05949947202148!3d-12.046373956452106!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c86f1e4d1b01%3A0x124d1e451b6d8e41!2sLima%2C%20Per%C3%BA!5e0!3m2!1ses!2sus!4v1697564892558!5m2!1ses!2sus" 
+            allowfullscreen="" 
+            loading="lazy">
+        </iframe>
+        <!--<div class="col-lg-5 mt-5" style="margin-right: 20px;">-->
+            <!-- Lista de sedes -->
+            <div class="scrollable-container">
+                <ul class="locations">
+                    <h3>Ubícanos</h3>
+                    <!-- Sede Lima -->
+                    <li>
+                        <div class="sede-item animate-slide card-1">
+                            <div>
+                                <span class="sede-name" onclick="changeLocation('https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3949.9873157641446!2d-79.04230072587407!3d-8.10277288105119!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91ad3d9652939a6b%3A0x3d6605bda7ff3236!2sAv.%20Mansiche%201131%2C%20Trujillo%2013011!5e0!3m2!1ses!2spe!4v1737584556061!5m2!1ses!2spe')">
+                                    Av. Mansiche #1131 - Urb. Santa Inés
+                                </span>
+                                <p class="sede-subtext">Sede Principal - Oficinas administrativas</p>
+                            </div>
+                            <button class="toggle-info" onclick="toggleInfo('trujillo-info')">+</button>
+                        </div>
+                        <div id="trujillo-info" class="sede-info">
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16" style="margin-right: 5px;">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
+                                </svg>
+                                <p>044 669930</p>
+                                <p style="margin-left: 10px;">963 491 548</p>
+                            </div>
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                                </svg>
+                                <p>corporation_dafc@gmail.com</p>
+                            </div>
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                                </svg>
+                                <p>Lun - Vie de 9:00am a 5:00pm</p>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Sede Pataz-->
+                    <li>
+                        <div class="sede-item animate-slide card-2">
+                            <div>
+                                <span class="sede-name" onclick="changeLocation('https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31413.79543078623!2d-71.56504105474862!3d-16.398835217506284!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91424b6a9a9a9f35%3A0x0!2sArequipa%2C%20Per%C3%BA!5e0!3m2!1ses!2sus!4v1697565399991!5m2!1ses!2sus')">
+                                    Intersección de las calles San Pedro y Barrio Alto
+                                </span>
+                                <p class="sede-subtext">Sede Pataz</p>
+                            </div>
+                            <button class="toggle-info" onclick="toggleInfo('pataz-info')">+</button>
+                        </div>
+                        <div id="pataz-info" class="sede-info">
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16" style="margin-right: 5px;">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
+                                </svg>
+                                <p>044 669930</p>
+                                <p style="margin-left: 10px;">964 252 837</p>
+                            </div>
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                                </svg>
+                                <p>corporation_dafc@gmail.com</p>
+                            </div>
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                                </svg>
+                                <p>Lun - Vie de 9:00am a 5:00pm</p>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Sede Llacuabamba -->
+                    <li>
+                        <div class="sede-item animate-slide card-3">
+                            <div>
+                                <span class="sede-name" onclick="changeLocation('https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1386.361804324483!2d-77.45090787702107!3d-8.03617600360104!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91ae456b235b88ed%3A0x7f3af8b2d05e689b!2sRESURGE%20CORPORATION%20EIRL%20-%20LLACUABAMBA!5e1!3m2!1ses!2spe!4v1737754680067!5m2!1ses!2spe')">
+                                    Vía. Evitamiento Nro. S/N Sec. Las Chilcas C.P.
+                                </span>
+                                <p class="sede-subtext">Sede Llacuabamba</p>
+                            </div>
+                            <button class="toggle-info" onclick="toggleInfo('llacuabamba-info')">+</button>
+                        </div>
+                        <div id="llacuabamba-info" class="sede-info">
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16" style="margin-right: 5px;">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
+                                </svg>
+                                <p>044 669930</p>
+                                <p style="margin-left: 10px;">914 268 954</p>
+                            </div>
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                                </svg>
+                                <p>corporation_dafc@gmail.com</p>
+                            </div>
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                                </svg>
+                                <p>Lun - Vie de 9:00am a 5:30pm</p>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Sede Tayabamba -->
+                    <li>
+                        <div class="sede-item animate-slide card-4">
+                            <div>
+                                <span class="sede-name" onclick="changeLocation('https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31413.79543078623!2d-71.56504105474862!3d-16.398835217506284!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91424b6a9a9a9f35%3A0x0!2sArequipa%2C%20Per%C3%BA!5e0!3m2!1ses!2sus!4v1697565399991!5m2!1ses!2sus')">
+                                    Jr. Bolívar Nro. 700
+                                </span>
+                                <p class="sede-subtext">Sede Tayabamba</p>
+                            </div>
+                            <button class="toggle-info" onclick="toggleInfo('tayabamba-info')">+</button>
+                        </div>
+                        <div id="tayabamba-info" class="sede-info">
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16" style="margin-right: 5px;">
+                                    <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
+                                </svg>
+                                <p>044 669930</p>
+                                <p style="margin-left: 10px;">983 060 185</p>
+                            </div>
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                                </svg>
+                                <p>corporation_dafc@gmail.com</p>
+                            </div>
+                            <div class="info-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                                </svg>
+                                <p>Lun - Vie de 9:00am a 5:00pm</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        <!--</div>-->
+    </div>
+    
+    <!-- End Map -->
+
+    <!-- Start Contact -->
+    <section class="bg-white">
+        <div class="container pb-5">
+            <div class="row ">
+                <div class="col-lg-5 mt-5 text-slide-item" style="margin-right: 50px;">
+                    <h3 class="fw-bold" style="
+                        font-family: 'Segoe UI', Roboto, Arial, sans-serif; 
+                        font-size: 30px;">
+                        ¿NECESITAS INFORMACIÓN ADICIONAL?
+                    </h3>
+                    <p class="mt-4" style="
+                        font-weight: 400; 
+                        font-family: 'Segoe UI', Roboto, Arial, sans-serif; 
+                        font-size: 18px; line-height: 1.6;">
+                        Déjanos tus datos para que un asesor se comunique contigo y te brinde mayor información.
+                    </p>
+                </div>
+                <div class="col-lg-6 mt-5 form-slide-container">
+                    <form id="contactForm"  class="row g-3">
+                        {% csrf_token %}
+                        <div class="col-md-6 position-relative form-slide-item">
+                            <label for="name" class="form-label">Nombres</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Ingresar nombres">
+                        </div>
+                        <div class="col-md-6 position-relative form-slide-item">
+                            <label for="lastname" class="form-label">Apellidos</label>
+                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Ingresar apellidos">
+                        </div>
+                        <div class="col-md-6 position-relative form-slide-item">
+                            <label for="phone" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="Ingresar teléfono">
+                        </div>
+                        <div class="col-md-6 position-relative form-slide-item">
+                            <label for="email" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingresar correo electrónico">
+                        </div>
+                        <!--
+                        <div class="col-md-6 position-relative">
+                            <label for="company" class="form-label">Empresa</label>
+                            <input type="text" class="form-control" id="company" name="company" placeholder="Ingresar empresa">
+                        </div>
+                        <div class="col-md-6 position-relative">
+                            <label for="ruc" class="form-label">RUC</label>
+                            <input type="text" class="form-control" id="ruc" name="ruc" placeholder="Ingresar RUC">
+                        </div>
+                        --
+                        <div class="col-md-6 position-relative form-slide-item">
+                            <label for="country" class="form-label">País</label>
+                            <select id="country" name="country" class="form-select">
+                                <option value="" selected>Seleccionar país</option>
+                                <option value="peru">Perú</option>
+                                <option value="mexico">México</option>
+                                !-- Más opciones --
+                            </select>
+                        </div>
+                        <div class="col-md-6 position-relative form-slide-item">
+                            <label for="city" class="form-label">Ciudad</label>
+                            <input type="text" class="form-control" id="city" name="city" placeholder="Ingresar ciudad">
+                        </div>
+                         -->
+                        <div class="mb-4 position-relative form-slide-item">
+                            <label for="inputmessage" class="form-label">Mensaje:</label>
+                            <textarea class="form-control" id="message" name="message" placeholder="Hola, deseo más información" rows="5"></textarea>
+                        </div>
+                        <div class="text-end mt-3 form-slide-item">
+                            <button type="submit" class="btn custome-btn" onclick="enviarCorreo()">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- End Contact -->
+
+    <script>
+        function enviarCorreo() {
+          // Recoger los valores de los campos
+          const name = document.getElementById('name').value;
+          const lastname = document.getElementById('lastname').value;
+          const phone = document.getElementById('phone').value;
+          const email = document.getElementById('email').value;
+          const message = document.getElementById('message').value;
+    
+          // Construir el asunto y el cuerpo del correo
+          const subject = encodeURIComponent('Nuevo mensaje de contacto');
+          const body = encodeURIComponent(
+            `Nombre: ${name} ${lastname}\nTeléfono: ${phone}\nCorreo: ${email}\nMensaje: ${message}`
+          );
+    
+          // Dirección de correo destino
+          const to = 'paul.cabrejos@tecsup.edu.pe';
+    
+          // Construir la URL para abrir la ventana de composición de Gmail
+          const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
+    
+          // Abrir la URL en una nueva pestaña
+          window.open(url, '_blank');
+        }
+    </script>
+
+    <script>
+        // Función para cambiar la ubicación del mapa
+        function changeLocation(url) {
+            document.getElementById("map").src = url;
+        }
+    
+        function toggleInfo(id) {
+            // Obtener todos los elementos de información y botones
+            var allInfo = document.querySelectorAll('.sede-info');
+            var allButtons = document.querySelectorAll('.toggle-info');
+
+            // Verificar el estado actual del ítem que se intenta abrir/cerrar
+            var info = document.getElementById(id);
+            var button = info.previousElementSibling.querySelector('.toggle-info'); // Encuentra el botón relacionado con la sede
+            var isCurrentlyOpen = info.classList.contains('show');
+
+            // Cerrar todos los ítems abiertos
+            allInfo.forEach(function(item) {
+                item.style.maxHeight = null; // Reinicia la altura
+                item.classList.remove('show');
+            });
+            allButtons.forEach(function(btn) {
+                btn.textContent = "+"; // Restaurar el signo a "+"
+                btn.classList.remove('active'); // Restaurar fondo blanco
+            });
+
+            // Si el ítem no estaba abierto, abrirlo
+            if (!isCurrentlyOpen) {
+                info.classList.add('show');
+                info.style.maxHeight = info.scrollHeight + "px"; // Establecer altura dinámica
+                button.textContent = "-"; // Cambiar el signo a "-"
+                button.classList.add('active'); // Cambiar fondo y color
+            }
+        }
+
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.querySelector(".map-container.animate-slide");
+            const sedeItems = document.querySelectorAll(".animate-slide.sede-item");
+
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            if (entry.target === container) {
+                                entry.target.classList.add("show-container");
+
+                                // Retrasar la animación de las sedes
+                                setTimeout(() => {
+                                    sedeItems.forEach((sede) => sede.classList.add("show-card"));
+                                }, 600); // Tiempo de la animación del contenedor (0.8s)
+                            }
+                        }
+                    });
+                },
+                {
+                    threshold: 0.1,
+                }
+            );
+
+            observer.observe(container);
+        });
+
+    </script>
+    
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const formContainer = document.querySelector(".form-slide-container");
+            const formItems = document.querySelectorAll(".form-slide-item");
+            const textItem = document.querySelector(".text-slide-item");
+
+            // Función para agregar las clases de animación al formulario
+            function animateForm() {
+                formContainer.classList.add("show-container");
+                textItem.classList.add("show-item");
+
+                formItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add("show-item");
+                    }, index * 100); // Escalonado con retraso
+                });
+            }
+
+            // Ejecutar la animación cuando el formulario esté en vista
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            animateForm();
+                            observer.disconnect(); // Desconectar después de animar
+                        }
+                    });
+                },
+                {
+                    threshold: 0.1, // Umbral de visibilidad
+                }
+            );
+
+            observer.observe(formContainer); // Observar el contenedor
+            observer.observe(textItem); // Observar el bloque de texto
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.querySelector(".container-fluid.fade-slide");
+
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            if (entry.target === container) {
+                                entry.target.classList.add("show-container");
+                            }
+                        }
+                    });
+                },
+                {
+                    threshold: 0.1,
+                }
+            );
+
+            observer.observe(container);
+        });
+    </script>
+
+{% endblock %}

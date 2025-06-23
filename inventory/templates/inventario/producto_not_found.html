@@ -1,0 +1,66 @@
+{% extends 'inventario/index.html' %}
+
+{% block title %}
+    EROR 404 - DAFC CORPORATION
+{% endblock %}
+
+{% load static %}
+
+{% block content %}
+
+<section class="error-section py-5" style="background-color: #f9f9f9;">
+    <div class="container text-center">
+        <div class="row mb-4">
+            <!-- Columna para el título -->
+            <div class="col-md-6">
+                <h1 class="" style="font-size: 2.6rem;" style="color: #03447e;">
+                    <i class="fas fa-exclamation-triangle"></i> ¡Lo Sentimos! No Encontramos lo que Buscabas
+                </h1>
+            </div>
+
+            <!-- Columna para la imagen de error -->
+            <div class="col-md-6">
+                <img src="{% static 'assets/img/icon_404.png' %}" alt="Error 404" class="img-fluid" style="width: 250; height: 250px;">
+            </div>
+        </div>
+
+        <!-- Descripción -->
+        <p class="lead  mb-4" style="color: #333;">
+            La página o el producto que buscas no está disponible en este momento. Puede que haya sido movido, eliminado o que nunca haya existido.
+        </p>
+
+        <!-- Recomendaciones -->
+        <div class="row justify-content-center">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-lg border-light" style="border-radius: 10px; background-color: #fff;">
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-search fa-3x mb-3" style="color: #03447e;"></i>
+                        <h5 class="card-title" style="color: #03447e;">¿Buscas Algo Más?</h5>
+                        <p class="card-text" style="color: #03447e;">Intenta realizar una nueva búsqueda o verifica la ortografía.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-lg border-light" style="border-radius: 10px; background-color: #fff;">
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-sync-alt fa-3x mb-3" style="color: #03447e;"></i>
+                        <h5 class="card-title" style="color: #03447e;">¿Quieres Intentarlo de Nuevo?</h5>
+                        <p class="card-text" style="color: #03447e;">Haz clic en el botón de abajo para recargar la página y probar otra vez.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón de acción para volver al inicio -->
+        <div class="mt-4">
+            <a href="/" class="btn btn-primary btn-lg" style="background-color: #03447e; border-color: #03447e;">
+                <i class="fas fa-home"></i> Volver a la Página Principal
+            </a>
+        </div>
+    </div>
+</section>
+
+    
+
+{% endblock %}

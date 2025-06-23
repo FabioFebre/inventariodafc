@@ -1,0 +1,596 @@
+{% extends 'inventario/index.html' %}
+
+{% block title %}
+    SERVICIO POST-VENTA - DAFC CORPORATION
+{% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <style>
+        /* SECCION ANIMADA DE PRODUCTOS NUEVOS*/
+        /* Ocultar inicialmente todos los elementos */
+
+        .sec2 {
+            border-bottom: 2px solid #e2e2e2; /* Color verde sólido */
+            padding-bottom: 10px; /* Espaciado entre el contenido y el borde */
+            
+        }
+
+        .card {
+            box-sizing: border-box;
+            background: rgba(250, 250, 250, 0.58);
+            border: 1px solid white;
+            box-shadow: 6px 15px 5px rgba(0, 0, 0, 0.22);
+            backdrop-filter: blur(6px);
+            border-radius: 17px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Hover: la tarjeta se eleva y aumenta la sombra */
+        .card:hover {
+            border: 1px solid black;
+            transform: scale(1.05);
+        }
+        .card:active {
+            transform: scale(0.95) rotateZ(1.7deg);
+        }
+
+
+        .animate-slide {
+            opacity: 0;
+            transform: translateY(-50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        /* Mostrar el contenedor */
+        .animate-slide.show-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mostrar las tarjetas después */
+        .animate-slide.show-card {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animación escalonada para las tarjetas */
+        .card-1 { transition-delay: 0.3s; } /* Aparece después de 0.9s */
+        .card-2 { transition-delay: 0.4s; } /* Aparece después de 1.2s */
+        .card-3 { transition-delay: 0.3s; } /* Aparece después de 1.5s */
+
+        /* ------------------------------------------------------------------------------------------------*/
+        /* ------------------------------------------------------------------------------------------------*/
+        /* ------------------------------------------------------------------------------------------------*/
+        .cardd {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: rgb(114, 114, 114);
+            text-align: center;
+        }
+
+        .cardd img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slider {
+            width: 100%;
+            height: var(--height);
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent, #000 10% 90%, transparent);
+        }
+        .slider .list {
+            display: flex;
+            width: 100%;
+            min-width: calc(var(--width) * var(--quantity));
+            position: relative;
+        }
+        .slider .list .item {
+            width: var(--width);
+            height: var(--height);
+            position: absolute;
+            left: 100%;
+            animation: autoRun 10s linear infinite;
+            transition: filter 0.5s;
+            animation-delay: calc(
+                (10s / var(--quantity)) * (var(--position) - 1) - 20s
+            ) !important;
+        }
+
+        .slider .list .item img {
+            width: 100%;
+        }
+
+        @keyframes autoRun {
+            from {
+                left: 100%;
+            }
+            to {
+                left: calc(var(--width) * -1);
+            }
+        }
+
+        .slider:hover .item {
+            animation-play-state: paused !important;
+            /*filter: grayscale(1);*/
+        }
+
+        .slider .item:hover {
+            filter: grayscale(0);
+        }
+
+        .slider[reverse="true"] .item {
+            animation: reversePlay 10s linear infinite;
+        }
+
+        @keyframes reversePlay {
+            from {
+                left: calc(var(--width) * -1);
+            }
+            to {
+                left: 100%;
+            }
+        }   
+
+        /* ------------------------------------------------------------------------------------------------*/
+        /* ------------------------------------------------------------------------------------------------*/
+        /* ------------------------------------------------------------------------------------------------*/
+         
+        /* Estilos para el Modal */
+        #soporteModal .modal-content {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        /* Encabezado del modal */
+        #soporteModal .modal-header {
+            background-color: #f2f6ff;
+            border-bottom: 1px solid #03447e;
+            padding: 1rem;
+        }
+
+        #soporteModal .modal-title {
+            color: #03447e;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Cuerpo del modal y formulario */
+        #soporteModal .modal-body {
+            padding: 1rem 1.5rem;
+        }
+
+        #contactFormModal {
+            padding-top: 10px;
+        }
+
+        /* Estilos para los inputs y textarea */
+        #contactFormModal .form-control {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        /* Etiquetas del formulario */
+        #contactFormModal .form-label {
+            font-weight: bold;
+            font-size: 16px;
+            color: #03447e;
+        }
+
+        /* Botón personalizado */
+        #soporteModal .btn-custome {
+            background-color: #003a59;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #soporteModal .btn-custome:hover {
+            background-color: #456d88;
+        }
+
+        /* Responsividad */
+        @media (max-width: 767px) {
+            #contactFormModal .form-control {
+                font-size: 0.9rem;
+        }
+        #soporteModal .btn-custome {
+                font-size: 0.9rem;
+                width: 100%;
+            }
+        }
+
+        /* ESTILOS DE MODAL DE CAPACITACIÓN */
+        /* -------------------------------------------------------------------------------*/
+        /* -------------------------------------------------------------------------------*/
+        /* -------------------------------------------------------------------------------*/
+
+         /* Fondo oscuro del modal */
+        #imageModalContainer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(247, 247, 247, 0.6);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        /* Contenedor del modal */
+        #imageModal {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: transparent;
+            border-radius: 10px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        /* Imágenes dentro del modal */
+        #imageModalContent {
+            display: flex;
+            gap: 20px;
+        }
+
+        #image1, #image2 {
+            width: 250px;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            animation: scaleUp 0.4s ease-in-out;
+        }
+
+        #image1:hover, #image2:hover {
+            transform: scale(1.1);
+        }
+
+         /* Botón de cierre mejor ubicado */
+        #closeImageModal {
+            position: absolute;
+            top: -30px;
+            right: -15px;
+            font-size: 40px;
+            color: rgb(92, 92, 92);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        #closeImageModal:hover {
+            color: black;
+        }
+
+        
+
+        /* RESPONSIVIDAD */
+        @media (max-width: 768px) {
+            #imageModalContent {
+                flex-direction: column; /* Cambia a diseño vertical en pantallas pequeñas */
+                align-items: center;
+            }
+
+            #image1, #image2 {
+                width: 80%; /* Ajusta el tamaño para móviles */
+            }
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        /* -------------------------------------------------------------------------------*/
+        /* -------------------------------------------------------------------------------*/
+        /* -------------------------------------------------------------------------------*/
+
+    </style>
+    <section class="">
+        <div class="container py-5 animate-slide">
+            <div class="row text-center py-3 sec2" style="margin-bottom: 50px;">
+                <div class="col-lg-6 m-auto">
+                    <h1 class="h1 text-success">SERVICIO POST - VENTA</h1>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Tarjeta 1 -->
+                <div class="col-12 col-md-4 mb-4 animate-slide card-1">
+                    <a href="{% url 'prov_categorias_rp' %}" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100 text-center shadow-sm" style="border-radius: 15px; background-color: #f2f6ff; padding: 20px;">
+                        <div class="card-body">
+                        <img src="{% static 'assets/img/icon-engranaje.png' %}" alt="Icono Hands" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                        <h2 class="h5 text-dark">REPUESTOS</h2>
+                        <ul style="list-style-type: disc; list-style-position: inside; padding: 0; margin: 20px 0; display: inline-block; text-align: left;">
+                            <li style="margin-bottom: 10px;">Stock ilimitado</li>
+                            <li style="margin-bottom: 10px;">Entrega inmediata</li>
+                        </ul>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+                
+                <!-- Tarjeta 2 -->
+                <div class="col-12 col-md-4 mb-4 animate-slide card-2">
+                    <a href="#" id="openImageModal" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100 text-center shadow-sm" style="border-radius: 15px; background-color: #f2f6ff; padding: 20px;">
+                        <div class="card-body">
+                        <img src="{% static 'assets/img/icon-list.png' %}" alt="Icono Eye" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                        <h2 class="h5 text-dark">CAPACITACIÓN</h2>
+                        <p class="card-text">
+                            Realizamos capacitaciones constantes en nuestras instalaciones y en zona de operación minera.
+                        </p>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+
+                <!-- Modal de imágenes (con ID único) -->
+                <div id="imageModalContainer">
+                    <div id="imageModal">
+                        <span id="closeImageModal">&times;</span>
+                        <div id="imageModalContent">
+                            <img id="image1" src="{% static 'assets/img/capacitacion-1.png' %}" alt="Imagen 1">
+                            <img id="image2" src="{% static 'assets/img/capacitacion-2.png' %}" alt="Imagen 2">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tarjeta 3 -->
+                <div class="col-12 col-md-4 mb-4 animate-slide card-3">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#soporteModal" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100 text-center shadow-sm" style="border-radius: 15px; background-color: #f2f6ff; padding: 20px;">
+                        <div class="card-body">
+                        <img src="{% static 'assets/img/icon-inge.png' %}" alt="Icono Valor" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                        <h2 class="h5 text-dark">SOPORTE TÉCNICO</h2>
+                        <p class="card-text">
+                            Visitas técnicas programadas, soluciones desarrolladas específicamente para satisfacer las necesidades de cada cliente.
+                        </p>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Soporte Técnico -->
+    <div class="modal fade" id="soporteModal" tabindex="-1" aria-labelledby="soporteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="soporteModalLabel">SOPORTE TÉCNICO</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+            <form id="contactFormModal" class="row g-3">
+                {% csrf_token %}
+                <div class="col-md-6">
+                <label for="nameModal" class="form-label">Nombres:</label>
+                <input type="text" class="form-control" id="nameModal" name="name" placeholder="Ingresar nombres">
+                </div>
+                <div class="col-md-6">
+                <label for="lastnameModal" class="form-label">Apellidos:</label>
+                <input type="text" class="form-control" id="lastnameModal" name="lastname" placeholder="Ingresar apellidos">
+                </div>
+                <div class="col-md-6">
+                <label for="phoneModal" class="form-label">Teléfono:</label>
+                <input type="text" class="form-control" id="phoneModal" name="phone" placeholder="Ingresar teléfono">
+                </div>
+                <div class="col-md-6">
+                <label for="emailModal" class="form-label">Correo electrónico:</label>
+                <input type="email" class="form-control" id="emailModal" name="email" placeholder="Ingresar correo electrónico">
+                </div>
+                <div class="col-12">
+                <label for="messageModal" class="form-label">Mensaje:</label>
+                <textarea class="form-control" id="messageModal" name="message" placeholder="Hola, deseo más información" rows="5"></textarea>
+                </div>
+                <div class="col-12 text-end">
+                <button type="button" class="btn-custome" onclick="enviarCorreoModal()">Enviar</button>
+                </div>
+            </form>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+    <section class="container py-5">
+        <div>
+            <div class="slider" style="--width: 200px; --height: 200px; --quantity: 5;">
+                <div class="list">
+                    <div class="item" style="--position: 1">
+                        <div class="cardd" >
+                            <img src="{% static 'assets/img/car2.jpg' %}" alt="Imagen 1">
+                        </div>
+                    </div>
+                    <div class="item" style="--position: 2">
+                        <div class="cardd" >
+                            <img src="{% static 'assets/img/car5.jpg' %}" alt="Imagen 2">
+                        </div>
+                    </div>
+                    <div class="item" style="--position: 3">
+                        <div class="cardd" >
+                            <img src="{% static 'assets/img/car8.jpg' %}" alt="Imagen 3">
+                        </div>
+                    </div>
+                    <div class="item" style="--position: 4">
+                        <div class="cardd">
+                            <img src="{% static 'assets/img/car11.jpg' %}" alt="Imagen 4">
+                        </div>
+                    </div>
+                    <div class="item" style="--position: 5">
+                        <div class="cardd">
+                            <img src="{% static 'assets/img/car5.jpg' %}" alt="Imagen 5">
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Start Section --
+    <section class="container py-5">
+        <div class="row text-center pt-5 pb-3">
+            <div class="col-lg-6 m-auto">
+                <h1 class="h1">Nuestros Servicios</h1>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    Lorem ipsum dolor sit amet.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6 col-lg-3 pb-5">
+                <div class="h-100 py-5 services-icon-wap shadow">
+                    <div class="h1 text-success text-center"><i class="fa fa-truck fa-lg"></i></div>
+                    <h2 class="h5 mt-4 text-center">Servicios de entrega</h2>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 pb-5">
+                <div class="h-100 py-5 services-icon-wap shadow">
+                    <div class="h1 text-success text-center"><i class="fas fa-exchange-alt"></i></div>
+                    <h2 class="h5 mt-4 text-center">Envío y devolución</h2>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 pb-5">
+                <div class="h-100 py-5 services-icon-wap shadow">
+                    <div class="h1 text-success text-center"><i class="fa fa-percent"></i></div>
+                    <h2 class="h5 mt-4 text-center">Promoción</h2>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 pb-5">
+                <div class="h-100 py-5 services-icon-wap shadow">
+                    <div class="h1 text-success text-center"><i class="fa fa-user"></i></div>
+                    <h2 class="h5 mt-4 text-center">Servicio 24 horas</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+    !-- End Section -->
+
+    <!-- SCRIPT DE ANIMACION PARA SECCION SERVICIO -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.querySelector(".container.animate-slide");
+            const cards = document.querySelectorAll(".animate-slide.card-1, .animate-slide.card-2, .animate-slide.card-3");
+        
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            if (entry.target === container) {
+                                entry.target.classList.add("show-container");
+        
+                                // Retrasar la animación de las tarjetas
+                                setTimeout(() => {
+                                    cards.forEach((card) => card.classList.add("show-card"));
+                                }, 600); // Tiempo de la animación del contenedor (0.8s)
+                            }
+                        }
+                    });
+                },
+                {
+                    threshold: 0.1,
+                }
+            );
+        
+            observer.observe(container);
+        });
+    </script>
+
+    <!-- SCRIPT PARA MODAL DE CAPACITACIÓN -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modalContainer = document.getElementById("imageModalContainer");
+            const openModal = document.getElementById("openImageModal");
+            const closeModal = document.getElementById("closeImageModal");
+    
+            openModal.addEventListener("click", function (e) {
+                e.preventDefault();
+                modalContainer.style.display = "flex";
+            });
+    
+            closeModal.addEventListener("click", function () {
+                modalContainer.style.display = "none";
+            });
+    
+            window.addEventListener("click", function (e) {
+                if (e.target === modalContainer) {
+                    modalContainer.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+    <!-- SCRIPT PARA EL FORMULARIO MODAL -->
+
+    <script>
+        function enviarCorreoModal() {
+          // Recoger los valores de los campos del formulario del modal
+          const name = document.getElementById('nameModal').value;
+          const lastname = document.getElementById('lastnameModal').value;
+          const phone = document.getElementById('phoneModal').value;
+          const email = document.getElementById('emailModal').value;
+          const message = document.getElementById('messageModal').value;
+      
+          // Construir el asunto y el cuerpo del correo
+          const subject = encodeURIComponent('Nuevo mensaje de contacto');
+          const body = encodeURIComponent(
+            `Nombre: ${name} ${lastname}\nTeléfono: ${phone}\nCorreo: ${email}\nMensaje: ${message}`
+          );
+      
+          // Dirección de correo destino
+          const to = 'paul.cabrejos@tecsup.edu.pe';
+      
+          // Construir la URL para abrir la ventana de composición de Gmail
+          const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
+      
+          // Abrir la URL en una nueva pestaña
+          window.open(url, '_blank');
+      
+          // Opcional: Cerrar el modal después de enviar (si se usa Bootstrap 5)
+          var modalEl = document.getElementById('soporteModal');
+          var modal = bootstrap.Modal.getInstance(modalEl);
+          if (modal) {
+            modal.hide();
+          }
+        }
+    </script>
+      
+{% endblock %}

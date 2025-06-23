@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CORPORACIÓN DAFC{% endblock %}</title>
+    <link rel="apple-touch-icon" href="{% static 'assets/img/apple-icon.png' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/logo.ico' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/templatemo.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/custom.css' %}">
+
+    <!-- Load fonts style after rendering the layout styles -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="{% static 'assets/css/fontawesome.min.css' %}">
+
+    <!-- Slick -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/slick.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/slick-theme.css' %}">
+
+    <style>
+
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /* SECCION DE CSS PARA BUSCADOR MODAL WEB*/
+
+        /* Contenedor de su gerencias oculto inicialmente y con transición de opacidad */
+            #sugerencias {
+                display: none;
+                opacity: 0;
+                transition: opacity 0.5s ease;
+                background: white;
+                border-radius: 5px;
+                max-height: 250px;
+                overflow-y: auto;
+                z-index: 1000;
+            }
+
+            /* Estilos para los títulos, separados de la barra de navegación */
+            #sugerencias h6 {
+                margin-top: 20px;
+                padding-top: 10px;
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            /* Estilos para cada sugerencia */
+            .list-group-item {
+                font-family: Arial, sans-serif;
+                font-size: 15px;
+                color: #333;
+                padding: 12px;
+                text-decoration: none;
+                border: none;
+            }
+
+            .list-group-item:hover {
+                background: #e0e0e0;
+                color: #000;
+                cursor: pointer;
+            }
+
+            /* Separador vertical en la columna izquierda */
+            .bordered-right {
+                position: relative;
+            }
+
+            .bordered-right::after {
+                content: "";
+                position: absolute;
+                top: 10%;
+                right: 0;
+                height: 80%;
+                width: 2px;
+                background-color: #ddd;
+            }
+
+            /* Estilos para tarjetas de productos horizontales */
+            .horizontal-card {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                background: #fff;
+                transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            }
+
+            .horizontal-card:hover {
+                background-color: #f1f1f1;
+                transform: translateY(-5px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            }
+
+            .horizontal-card img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border-radius: 8px;
+                margin-right: 15px;
+                transition: transform 0.3s ease;
+            }
+
+            .horizontal-card:hover img {
+                transform: scale(1.05);
+            }
+
+            .horizontal-card .card-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .horizontal-card .card-info p {
+                margin: 0;
+                font-size: 14px;
+                color: #666;
+                transition: color 0.3s ease;
+            }
+
+            .horizontal-card:hover .card-info p {
+                color: #555;
+            }
+        
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+
+        /* SECCION DE CSS PARA BUSCADOR MOVIL */
+        
+        .mobile-section-header {
+            font-weight: bold;
+            font-size: 14px;
+            color: #555;
+            padding: 8px 12px;
+            background-color: #f7f7f7;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Opcional: Puedes ajustar el estilo de cada item de sugerencia si lo deseas */
+        #mobileSuggestions .list-group-item {
+            padding: 10px 12px;
+            font-size: 15px;
+            color: #333;
+            border: none;
+        }
+        #mobileSuggestions .list-group-item:hover {
+            background: #e0e0e0;
+            color: #000;
+            cursor: pointer;
+        }
+
+        
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+
+        /* BURBUJA FLOTANTE DEL WHATSAPP */
+
+        .whatsapp-bubble {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .whatsapp-bubble img {
+            width: 35px;
+            height: 35px;
+        }
+
+        /* Popup base (inicialmente oculto) */
+        .popup {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 320px;
+            /* Cambiamos la altura fija por una mínima para que el contenido defina el alto */
+            min-height: 190px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            z-index: 1001;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Clase para mostrar el popup */
+        .popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Contenedor superior: fondo WhatsApp verde */
+        .popup-top {
+            background-color: #25D366;
+            height: 100px;
+            color: white;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;  
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            
+        }
+
+        .popup-texts {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .popup-top .popup-icon {
+            width: 45px;
+            height: 45px;
+            margin-right: 10px;
+        }
+        .popup-top .popup-text {
+            font-size: 16px;
+            color: white;
+            font-family: sans-serif;
+            font-weight: bold;
+        }
+        .popup-text.bottom-text {
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* Contenedor inferior: fondo blanco */
+        .popup-bottom {
+            background-color: #ffffff;
+            padding: 10px;
+            /* Quitamos la altura fija para que se ajuste al contenido */
+            height: auto;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        /* Enlace interno con borde y efecto hover */
+
+        .popup-contact {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #25D366;
+            background: #f5f5f5;
+            border-left: 1px solid #25D366;
+            border-radius: 5px;
+            padding: 15px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Cuando el popup esté activo, se aplica la animación */
+        .popup.active .popup-contact {
+            animation: fadeUp 0.5s ease-out;
+        }
+
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .popup-contact:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-5px);
+            
+        }
+        .popup-icon-small {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .popup-contact-info {
+            margin-left: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-name {
+            font-size: 14px;
+            color: #a7a7a7;
+            font-weight: bold;
+        }
+        .contact-number {
+            color: #a7a7a7;
+            font-weight: 400;
+            font-size: 13px;
+        }
+
+        /* Responsividad para el popup */
+        @media (max-width: 300px) {
+            .popup {
+                width: 90%;
+                right: 5%;
+                left: 5%;
+                bottom: 90px;  /* Ajusta según tu diseño */
+            }
+            .popup-top,
+            .popup-bottom {
+                padding: 10px;
+            }
+            .popup-top {
+                height: auto; /* Permite que el contenido determine la altura */
+            }
+        }
+
+        /* SVG de la "X" */
+        .close-icon {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            display: none;
+            stroke: white;
+            stroke-width: 3;
+            stroke-linecap: round;
+            transform-origin: center;
+            transition: transform 0.3s ease;
+        }
+
+        .close-icon line {
+            stroke-dasharray: 28;
+            stroke-dashoffset: 28;
+            transition: stroke-dashoffset 0.3s ease-in-out;
+        }
+
+        /* Mostrar y animar la "X" */
+        .close-icon.active {
+            display: block;
+            animation: scaleBounce 0.4s ease-out forwards;
+        }
+
+        .close-icon.active .line1 {
+            animation: drawLine 0.3s ease-out forwards;
+        }
+
+        .close-icon.active .line2 {
+            animation: drawLine 0.3s ease-out 0.1s forwards;
+        }
+
+        /* Animaciones */
+        @keyframes drawLine {
+            0% {
+                stroke-dashoffset: 28;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes scaleBounce {
+            0% {
+                transform: scale(0.5);
+            }
+            70% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes rotateIcon {
+            0% {
+                transform: rotate(200deg);
+            }
+            
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        .whatsapp-bubble .rotate {
+            animation: rotateIcon 0.6s ease-in-out;
+        }
+
+
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+
+        /* DISEÑO DEL CARRUSEL DE LAS MARCAS DAFC */
+
+        /* Asegurarse de que todos los elementos de la fila tengan el mismo tamaño y estén alineados */
+        .carousel-item .row {
+            display: flex;
+            justify-content: center;  /* Centra los elementos dentro de la fila */
+            align-items: center;      /* Alinea las imágenes verticalmente */
+        }
+
+        /* Ajuste de los contenedores de cada imagen para que sean igualmente grandes */
+        .carousel-item .col-3 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0; /* Elimina el padding innecesario */
+            height: 250px; /* Asegura que todos los contenedores tengan la misma altura */
+        }
+
+        /* Esto asegura que las imágenes dentro de los enlaces se mantengan en su tamaño ajustado */
+        .carousel-item .col-3 a {
+            display: block;  /* Hace que el enlace ocupe todo el contenedor */
+            width: 100%;     /* Asegura que el enlace sea del tamaño del contenedor */
+        } 
+
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        
+        /* DISEÑO DEL NAVBAR Y SUBMENUS*/
+
+        .nav-item.dropdown {
+            position: relative;
+        }
+
+        /* Para que cuando se agregue la clase "show", el dropdown se muestre en móvil */
+        .dropdown-menu.show {
+            display: block !important;
+        }
+        
+
+        /* Ocultar todos los submenús por defecto */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+        }
+
+        /* Mostrar el submenú cuando se pasa el mouse sobre la opción de primer nivel */
+        .nav-item.dropdown:hover > .dropdown-menu {
+            display: block;
+        }
+
+        /* Submenú de nivel 2 (submenú dentro de un submenú) */
+        .dropdown-submenu {
+            position: relative;
+        }
+
+        /* Mostrar el submenú de nivel 2 solo cuando se pasa el mouse sobre la subopción */
+        .dropdown-submenu:hover > .dropdown-menu {
+            display: block;
+        }
+
+        /* Submenú de nivel 2 desplazado a la derecha */
+        .dropdown-menu-right {
+            left: 100%; /* Mueve el submenú a la derecha */
+            top: 0;
+            position: absolute;
+            margin-left: 2px;
+        }
+
+        /* Estilo para los enlaces dentro de los menús */
+        .nav-link, .dropdown-item {
+            font-weight: bold;
+            font-size: 15px;
+            white-space: nowrap;
+            color: #000; /* Color de texto inicial */
+        }
+
+        /* Cambiar color de los enlaces cuando se pasa el mouse (hover) */
+        .nav-link:hover, .dropdown-item:hover { 
+            color: #03447e; /* Color del texto al hacer hover */
+        }
+
+        /* Estilo para los submenús cuando se pasa el mouse sobre las subopciones */
+        .dropdown-submenu > a:hover {
+            background-color: #f1f1f1; /* Fondo cuando se pasa el mouse sobre el enlace */
+            color: white !important; /* Color del texto cuando se pasa el mouse sobre el enlace */
+        }
+
+        /* Para los submenús que se abren al hacer hover, cambiar el color de fondo */
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #03447e; /* Fondo cuando se pasa el mouse sobre el item de submenú */
+            color: white !important; /* Color del texto cuando se pasa el mouse sobre el item de submenú */
+        }
+
+        /* Añadir un poco de espacio entre los ítems del submenú */
+        .dropdown-menu .dropdown-item {
+            padding: 10px 15px;
+        }
+
+        /* Linea del navbar solo afecta a los elementos con la clase 'nav-link' */
+        .navbar-nav .nav-item .nav-link {
+            position: relative;
+            padding-bottom: 5px;
+            transition: border-bottom 0.1s ease; /* Animación suave */
+        }
+
+        /* Línea activa en el enlace con la clase 'active' */
+        .navbar-nav .nav-item .nav-link.active {
+            border-bottom: 3px solid #ff9318; /* Color de la línea */
+        }
+
+        /* Línea que aparece al pasar el mouse */
+        .navbar-nav .nav-item .nav-link:hover {
+            border-bottom: 3px solid #ff9318; /* Línea que aparece al pasar el mouse */
+        }
+
+        /* Desaparición de la línea cuando no se hace hover */
+        .navbar-nav .nav-item .nav-link:not(:hover) {
+            transition: border-bottom 1s ease; /* Desaparición más suave */
+        }
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /* TARJETAS DE PRODUCTOS*/
+        .custom-card .card {
+            width: 100%; /* El ancho se adapta al contenedor padre */
+            height: 400px; /* Define una altura fija para las tarjetas */
+            overflow: hidden; /* Oculta cualquier contenido que exceda el contenedor */
+            border-radius: 8px !important; /* Esquinas ligeramente redondeadas */
+        }
+
+        .custom-card .card img {
+            width: 100%; /* La imagen ocupa el ancho completo */
+            height: 100%; /* La imagen ocupa la altura completa */
+            object-fit: cover; /* Asegura que la imagen mantenga proporción y llene el espacio */
+        }
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+
+        /* ===============================
+            Seccion de Info
+        =============================== */
+
+        /* Estilos para la columna izquierda: fondo azul y letras blancas */
+        .left-column {
+            background-color: #002645; /* Azul */
+            color: #ffffff;
+            padding: 60px;
+            }
+
+        /* Estilos para la columna derecha: fondo blanco y letras azules */
+        .right-column {
+            background-color: #ffffff;
+            color: #002645; /* Azul */
+            padding: 60px;
+        }
+
+        /* Estilos para subtítulos y párrafos */
+        .subtitle {
+            font-size: 19px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .text {
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* From Uiverse.io by adamgiebl */ 
+        .cssbuttons-io-button {
+            text-decoration: none;
+            width: 30%;
+            background: #ffd500;
+            color: rgb(51, 51, 51);
+            font-family: 'Roboto', sans-serif;
+            padding: 0.35em;
+            padding-left: 1.2em;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 0.9em;
+            border: none;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            box-shadow: inset 0 0 1.6em -0.6em #ffd500;
+            overflow: hidden;
+            position: relative;
+            height: 2.8em;
+            padding-right: 3.3em;
+            cursor: pointer;
+        }
+
+        .cssbuttons-io-button .icon {
+            background: white;
+            margin-left: 1em;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 2em;
+            width: 2.2em;
+            border-radius: 0.7em;
+            box-shadow: 0.1em 0.1em 0.6em 0.2em #ffd500;
+            right: 0.3em;
+            transition: all 0.3s;
+        }
+
+        .cssbuttons-io-button:hover .icon {
+            width: calc(100% - 0.6em);
+        }
+
+        .cssbuttons-io-button .icon svg {
+            width: 1.1em;
+            transition: transform 0.3s;
+            color: black;
+        }
+
+        .cssbuttons-io-button:hover .icon svg {
+        transform: translateX(0.1em);
+        }
+
+        .cssbuttons-io-button:active .icon {
+        transform: scale(0.95);
+        }
+
+        /* ===============================
+        Media Query: Pantallas Medianas 
+        (≥768px y <992px)
+        =============================== */
+        @media (max-width: 991px) and (min-width: 768px) {
+            .cssbuttons-io-button {
+                width: 45%;           /* Aumenta el ancho para aprovechar el espacio */
+                font-size: 14px;      /* Ajusta ligeramente el tamaño de la fuente */
+                padding: 0.35em 1em;  /* Ajusta los paddings */
+            }
+        }
+
+        /* ===============================
+        Media Query: Pantallas Pequeñas 
+        (≥576px y <768px)
+        =============================== */
+        @media (max-width: 767px) and (min-width: 576px) {
+            .cssbuttons-io-button {
+                width: 30%;           /* El botón ocupa un mayor porcentaje */
+                font-size: 13px;      /* Tamaño de fuente reducido */
+                height: 2.6em;        /* Ajusta la altura */
+                padding: 0.3em 0.8em;  /* Ajusta el padding */
+            }
+            .cssbuttons-io-button .icon {
+                width: 1.8em;
+                height: 1.8em;
+                right: 0.3em;
+            }
+        }
+
+        /* ===============================
+        Media Query: Pantallas Extra Pequeñas 
+        (Menos de 576px)
+        =============================== */
+        @media (max-width: 575px) and (min-width: 276px) {
+            .cssbuttons-io-button {
+                width: 45%;           /* Ocupa un mayor porcentaje del contenedor */
+                font-size: 12px;      /* Fuente un poco más pequeña */
+                height: 2.4em;        /* Ajusta la altura */
+                padding: 15px;  /* Ajusta el padding */
+            }
+            .cssbuttons-io-button .icon {
+                width: 1.6em;
+                height: 1.5em;
+                right: 0.3em;
+            }
+        }
+
+    
+        /* Animación: estados inicial y final para elementos que deben aparecer desde abajo */
+        .animate-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        /* Cuando se activa la animación, se añade la clase "visible" */
+        .animate-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animación escalonada (opcional) */
+        .left-column .subtitle.animate-up { transition-delay: 0.2s; }
+        .left-column .text.animate-up { transition-delay: 0.4s; }
+        .left-column .cssbuttons-io-button.animate-up { transition-delay: 0.6s; }
+
+        .right-column .subtitle.animate-up { transition-delay: 0.2s; }
+        .right-column .text.animate-up { transition-delay: 0.4s; }
+        .right-column .cssbuttons-io-button.animate-up { transition-delay: 0.6s; }
+
+        /* Centrado vertical en pantallas medianas en adelante (opcional) */
+        @media (min-width: 768px) {
+            .left-column,
+            .right-column {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+        }
+
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /* ===============================
+            Nuevo Diseño: Tarjeta Giratoria
+            (Basado en Uiverse.io - renombrado a .cardddd)
+            =============================== */
+            .cardddd {
+                width: 300px;
+                height: 300px;
+                background: #fafafa;
+                transition: all 0.4s;
+                border-radius: 15px;
+                font-size: 50px;
+                font-weight: 900;
+                overflow: hidden;
+                box-shadow: 20px 20px 20px #bebebe,
+                    -20px -20px 60px #ffffff;
+
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                position: relative; /* Necesario para que el contenido se posicione bien */
+            }
+
+            /* Responsividad: en pantallas pequeñas, que la tarjeta se adapte al ancho del contenedor */
+            @media (max-width: 767px) {
+            .cardddd {
+                width: 100%;
+            }
+            }
+
+            .cardddd:hover {
+                border-radius: 15px;
+                cursor: pointer;
+                transform: scale(1.2);
+                background: rgb(175, 200, 255);
+            }
+
+            /* Contenido frontal: muestra la imagen */
+            .first-content {
+                height: 100%;
+                width: 100%;
+                transition: all 0.4s;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: all 0.4s;
+                opacity: 1;
+                border-radius: 15px;
+                position: absolute; /* Lo mantenemos sobre el second-content */
+                top: 0;
+                left: 0;
+                
+            }
+
+            .cardddd:hover .first-content {
+                height: 0;
+                opacity: 0;
+            }
+
+            /* Contenido trasero: muestra nombre y descripción */
+            .second-content {
+                height: 100%;
+                width: 100%;
+                opacity: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 15px;
+                transition: all 0.4s;
+                font-size: 0;
+                transform: rotate(90deg) scale(-1);
+            }
+
+            .cardddd:hover .second-content {
+                opacity: 1;
+                height: 100%;
+                font-size: 1.8rem;
+                transform: rotate(0deg);
+            }
+
+            /* Asegurar que la imagen se ajuste bien */
+            .producto-img {
+                width: 100%;
+                height: 80%;
+                object-fit: contain;
+            }
+
+            /* Opcional: Estilos para el contenido interno de la parte trasera */
+            .tarjeta-contenido {
+                padding: 10px;
+                text-align: center;
+                color: #03447e; /* Color del texto, puedes ajustarlo */
+            }
+
+            .text-producto {
+                font-family: 'Roboto', sans-serif;
+                font-size: 16px;
+                margin-bottom: 5px;
+                font-weight: bold;
+                text-align: center;
+                color: #03447e;
+            }
+
+            .texto-producto {
+                font-size: 1rem;
+                font-family: 'Roboto', sans-serif;
+                font-weight: 400;
+                color: #666;
+                margin: 0;
+            }
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+
+        /* Clase base que es invisible y desplazada inicialmente */
+        .lopedido {
+            opacity: 0;
+            transform: translateX(-100%);
+            transition: all 1s ease-in-out;
+        }
+
+        /* Clase para activar la animación */
+        .lopedido.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Animación para el texto (aparecer desde abajo) */
+        .texto-animado {
+            opacity: 0;
+            transform: translateY(50%);
+            transition: all 1s ease-in-out;
+        }
+
+        .texto-animado.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+
+         /* SECCION ANIMADA DE PRODUCTOS NUEVOS*/
+        /* Ocultar inicialmente todos los elementos */
+        .sec2 {
+            border-bottom: 2px solid #e2e2e2; /* Color verde sólido */
+            padding-bottom: 10px; /* Espaciado entre el contenido y el borde */
+            
+        }
+       
+        /* Diseño general de las tarjetas destacados */
+        .destacados-card {
+            
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 8px 8px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Hover: la tarjeta se eleva y aumenta la sombra */
+        .destacados-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Imagen de la tarjeta con tamaño fijo y efecto suave */
+        .destacados-card-img {
+            display: block;
+            width: 100%;
+            height: 300px; /* Ajusta la altura según prefieras */
+            object-fit: cover;
+        }
+
+        /* Contenedor interno de la tarjeta (cuerpo) */
+        .destacados-card-body {
+            padding: 20px;
+        }
+
+        /* Título del producto */
+        .destacados-card-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #03447e;
+            transition: color 0.3s ease;
+        }
+        .destacados-card-title:hover {
+            color: #026ab3;
+        }
+
+        /* Texto descriptivo del producto */
+        .destacados-card-text {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 0;
+        }
+
+
+        .animate-slide {
+            opacity: 0;
+            transform: translateY(-50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        /* Mostrar el contenedor */
+        .animate-slide.show-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mostrar las tarjetas después */
+        .animate-slide.show-card {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animación escalonada para las tarjetas */
+        .card-destacados-1 { transition-delay: 0.3s; } /* Aparece después de 0.9s */
+        .card-destacados-2 { transition-delay: 0.4s; } /* Aparece después de 1.2s */
+        .card-destacados-3 { transition-delay: 0.3s; } /* Aparece después de 1.5s */
+
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+
+
+         /*DISEÑO PARA ANIMACION DEL CARRUSEL PRINCIPAL */
+        /* Animación de deslizamiento del texto */
+        @keyframes slideInFromLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Aplica la animación solo al texto */
+        .text-slide-item {
+            opacity: 0;
+            animation: slideInFromLeft 0.8s ease-out forwards;
+        }
+
+        /* Escalonar la animación entre las diferentes diapositivas */
+        .carousel-item.active .text-slide-item {
+            animation-delay: 0.1s; /* Retraso de 0.5s entre las diapositivas */
+        }
+
+        /* Opcional: Puedes ajustar el tiempo de la animación o el retraso */
+        .carousel-item-next .text-slide-item,
+        .carousel-item-prev .text-slide-item {
+            animation: none;
+        }  
+
+
+        /* Animación de desvanecimiento para las imágenes */
+        @keyframes fadeInImage {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Aplica la animación de desvanecimiento a las imágenes */
+        .img-slide-item {
+            opacity: 0;
+            animation: fadeInImage 1s ease-out forwards;
+        }
+
+        /* Retraso de la animación según la diapositiva */
+        .carousel-item.active .img-slide-item {
+            animation-delay: 0.5s; /* Retraso de 0.5s para la primera diapositiva */
+        }
+
+        .carousel-item-next .img-slide-item,
+        .carousel-item-prev .img-slide-item {
+            animation: none; /* Evita que las imágenes anteriores o siguientes se animen */
+        }
+
+        /* Aplica un retraso para cada diapositiva siguiente */
+        .carousel-item:nth-child(1) .img-slide-item {
+            animation-delay: 0.4s; /* Retraso de 0.5s */
+        }
+
+        .carousel-item:nth-child(2) .img-slide-item {
+            animation-delay: 0.5s; /* Retraso de 1s */
+        }
+
+        .carousel-item:nth-child(3) .img-slide-item {
+            animation-delay: 0.5s; /* Retraso de 1.5s */
+        }
+
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+        /*------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------- */
+
+        /* DISEÑO PARA EL FOOTER*/
+        /* Para pantallas medianas en adelante, se muestra la línea divisoria a la derecha */
+        .bordered-div {
+            position: relative;
+            padding: 15px;
+            color: white !important;
+        }
+        .bordered-div .h4 {
+            font-size: 20px;
+        }
+        .bordered-div:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            height: 90%;
+            border-right: 1px solid rgba(255, 255, 255, 0.2); /* Ajusta el color y grosor según convenga */
+        }
+
+        .text-footer {
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 15px;
+        }
+
+        .text-footer1 {
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        /* Para pantallas pequeñas, se elimina la línea derecha y se coloca una línea inferior */
+        @media (max-width: 768px) {
+            .bordered-div:not(:last-child)::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            }
+        }
+
+
+        /* Botón */
+        /* Botón */
+        #btnArriba {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: none;
+            background-color: #5e5e5e;
+            color: white;
+            border: none;
+            padding: 12px 14px;
+            font-size: 17px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(30px); /* Inicia más abajo */
+        }
+
+        /* Aparece con animación */
+        #btnArriba.mostrar {
+            display: block;
+            animation: fadeInUp 0.5s ease-in-out forwards;
+        }
+
+        /* Animación en hover */
+        #btnArriba:hover {
+            background-color: #457aa8;
+            transform: scale(1.1);
+        }
+
+        /* Animación del ícono */
+        #btnArriba svg {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Efecto de latido en hover */
+        #btnArriba:hover svg {
+            animation: heartbeat 0.8s infinite ease-in-out;
+        }
+
+        /* Animación de aparición */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animación de latido */
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- Start Top Nav -->
+    <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
+        <div class="container text-light">
+            <div class="w-100 d-flex justify-content-between">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16" style="margin-right: 5px;">
+                        <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                    </svg>
+                    <a class="navbar-sm-brand text-light text-decoration-none fw-bold" href="https://maps.app.goo.gl/55hdcuXqGECaQNws5  " style="margin-right: 20px;">Av. Mansiche #1131 – Urb. Santa Inés</a>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16" style="margin-right: 5px;">
+                        <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
+                    </svg>
+                    
+                    <a class="navbar-sm-brand text-light text-decoration-none fw-bold" href="https://wa.me/51999542168?text=Hola%20me%20gustaría%20más%20información">963 491 548</a>
+                </div>
+                <div>
+                    <a class="text-light" href="https://www.facebook.com/people/DAFC-Corporaci%C3%B3n/100089856699765/" target="_blank" rel="sponsored"><i class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://www.instagram.com/resurge_corporation_eirl/?hl=es" target="_blank"><i class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://twitter.com/" target="_blank"><i class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://www.linkedin.com/company/dafc-corporaci%C3%B3n/?originalSubdomain=pe" target="_blank"><i class="fab fa-linkedin fa-sm fa-fw"></i></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Close Top Nav -->
+
+    
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow ">
+        <div class="container d-flex justify-content-between align-items-center">
+            
+            <a class="navbar-brand text-success logo h1 align-self-center" href="{% url 'home' %}">
+                <img src="{% static 'assets/img/logo.png' %}" alt="No cargó" style="width: 90px; height: 50px;">
+            </a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
+                <div class="flex-fill">
+                    <ul class="nav navbar-nav d-flex justify-content-between flex-nowrap"> 
+
+                        <!-- Menú "INICIO" -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}" style="font-weight: bold; font-size: 15px; white-space: nowrap; margin-right: 10px;">
+                                INICIO
+                            </a>
+                        </li>
+                        <!-- Menú desplegable "NOSOTROS" -->
+                        <li class="nav-item dropdown" id="nosotros">
+                            <a class="nav-link  {% if request.path == '/about/' %}active{% endif %}" id="navbarDropdown" role="button" aria-expanded="false"  href="{% url 'about' %}"  style="font-weight: bold; font-size: 15px; white-space: nowrap; margin-right: 10px;">
+                                NOSOTROS
+                            </a>
+                            
+                        </li>
+
+                        <!-- Menú desplegable "PRODUCTOS" -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if request.path == '/prov_categorias_produc/' %}active{% endif %}" id="navbarDropdown" role="button" aria-expanded="false" href="{% url 'prov_categorias_produc' %}" style="font-weight: bold; font-size: 15px; white-space: nowrap; margin-right: 10px;">
+                                PRODUCTOS
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+                                {% for proveedor, categorias in proveedores_maquinaria.items %}
+                                        <li class="dropdown-submenu">
+                                            <a class="dropdown-item" href="{% url 'productos_por_proveedor' proveedor.id %}?tipo=maquinaria">{{ proveedor.nombre }}</a>
+                                            {% if categorias %}
+                                                <ul class="dropdown-menu dropdown-menu-right">
+                                                    {% for categoria in categorias %}
+                                                        <li><a class="dropdown-item" href="{% url 'shop' proveedor.id categoria.id %}">{{ categoria.nombre }}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <!--
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+                            {% for proveedor, categorias in proveedores_con_categorias.items %}
+                            <li><a class="dropdown-item" href="#">{{ categoria.nombre }}</a></li>
+                            
+                            
+                            
+                            <li><a class="dropdown-item" href="#">Categoría 2</a></li>
+                             Submenú de "Accesorios"
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item" href="#">Accesorios</a>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    {% for categoria in categorias %}
+                                    <li><a class="dropdown-item" href="#">Accesorio 1</a></li>
+                                    {% endfor %}
+                                    <li><a class="dropdown-item" href="#">Accesorio 2</a></li>
+                                </ul>
+                            </li>
+                            <li><a class="dropdown-item" href="#">Categoría 3</a></li>
+                            
+                            {% endfor %}
+                        </ul>
+                        -->
+                        <!-- Menú desplegable "REPUESTOS Y LUBRICANTES" --> 
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if request.path == '/prov_categorias_rp/' %}active{% endif %}" id="navbarDropdown" role="button" aria-expanded="false" href="{% url 'prov_categorias_rp' %}" style="font-weight: bold; font-size: 15px; white-space: nowrap; margin-right: 10px;">
+                                REPUESTOS Y LUBRICANTES
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownRepuestos">
+                                {% for proveedor, categorias in proveedores_repuestos.items %}
+                                        <li class="dropdown-submenu">
+                                            <a class="dropdown-item" href="{% url 'productos_por_proveedor' proveedor.id %}?tipo=repuestos_lubricantes">{{ proveedor.nombre }}</a>
+                                            {% if categorias %}
+                                                <ul class="dropdown-menu dropdown-menu-right">
+                                                    {% for categoria in categorias %}
+                                                        <li><a class="dropdown-item" href="{% url 'shop' proveedor.id categoria.id %}">{{ categoria.nombre }}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <!--
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownRepuestos">
+                                {% for categoria in categorias_repuestos %}
+                                <li><a class="dropdown-item" href="#">{{ categoria.nombre }}</a></li>
+                                {% endfor %}
+                                {% for categoria in categorias_ambos %}
+                                <li><a class="dropdown-item" href="#">{{ categoria.nombre }}</a></li>
+                                {% endfor %}
+                                Submenú de "Lubricantes"
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item" href="#">Lubricantes</a>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li><a class="dropdown-item" href="#">Lubricante A</a></li>
+                                        <li><a class="dropdown-item" href="#">Lubricante B</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        -->
+
+                        <!-- Menú desplegable "SERVICIOS POST VENTA" -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link {% if request.path == '/servicio-postventa/' %}active{% endif %}" id="navbarDropdown" role="button" aria-expanded="false" href="{% url 'servicio-postventa' %}" style="font-weight: bold; font-size: 15px; white-space: nowrap; margin-right: 10px;">
+                                SERVICIOS POST VENTA
+                            </a>
+                            <!--
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownServicios">
+                                <li><a class="dropdown-item" href="#">Servicio 1</a></li>
+                                <li><a class="dropdown-item" href="#">Servicio 2</a></li>
+                                !-- Submenú de "Mantenimiento" --
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item" href="#">Mantenimiento</a>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li><a class="dropdown-item" href="#">Mantenimiento A</a></li>
+                                        <li><a class="dropdown-item" href="#">Mantenimiento B</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                             -->
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link {% if request.path == '/contact/' %}active{% endif %}"  href="{% url 'contact' %}" style="font-weight: bold; font-size: 15px; white-space: nowrap; ">
+                                CONTACTO
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar align-self-center d-flex">
+                    <div class="d-lg-none w-100 mt-3 mb-4" style="position: relative;">
+                      <form action="{% url 'buscar_producto' %}" method="GET">
+                        <div class="input-group">
+                          <input type="text" class="form-control" id="inputMobileSearch" name="q" placeholder="Buscar...">
+                          <div class="input-group-text">
+                            <i class="fa fa-fw fa-search"></i>
+                          </div>
+                        </div>
+                        <!-- Contenedor de sugerencias para mobile (opcional, para búsqueda en vivo) -->
+                        <div id="mobileSuggestions" class="list-group" style="display: none; opacity: 0; position: absolute; top: 100%; left: 0; width: 100%; z-index: 1050;">
+                          <!-- Se llenará dinámicamente con JS -->
+                        </div>
+                      </form>
+                    </div>
+                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
+                      <i class="fa fa-fw fa-search text-dark mr-2"></i>
+                    </a>
+                  </div>                  
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <!-- Close Header -->
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'buscar_producto' %}" method="GET" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Buscar...">
+                    <button type="submit" class="input-group-text bg-primary text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+                <!-- Contenedor con dos columnas: Izquierda para categorías y proveedores, Derecha para productos -->
+                <div id="sugerencias" class="row">
+                    <!-- Columna izquierda -->
+                    <div class="col-md-4 bordered-right">
+                    <h6 class="mb-2">Categorías</h6>
+                    <ul id="sugerenciasCategorias" class="list-group mb-3">
+                        <!-- Se cargarán dinámicamente -->
+                    </ul>
+                    <h6 class="mb-2">Proveedores</h6>
+                    <ul id="sugerenciasProveedores" class="list-group">
+                        <!-- Se cargarán dinámicamente -->
+                    </ul>
+                    </div>
+                    <!-- Columna derecha -->
+                    <div class="col-md-8">
+                    <h6 class="mb-2">Productos Relacionados</h6>
+                    <div id="sugerenciasProductos" class="row">
+                        <!-- Se cargarán dinámicamente en grilla (2 columnas) -->
+                    </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+   
+    
+    <!-- Burbuja flotante de WhatsApp -->
+    <div class="whatsapp-bubble" id="whatsappBubble">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" id="whatsappIcon">
+        
+        <!-- SVG de la "X" con animación mejorada -->
+        <svg id="closeIcon" class="close-icon" width="40" height="40" viewBox="0 0 40 40">
+            <line class="line1" x1="10" y1="10" x2="30" y2="30"></line>
+            <line class="line2" x1="30" y1="10" x2="10" y2="30"></line>
+        </svg>
+        <!-- Popup emergente -->
+        <div class="popup" id="whatsappPopup">
+        <!-- Contenedor superior (verde) -->
+        <div class="popup-top">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="popup-icon">
+            <div class="popup-texts">
+                <span class="popup-text top-text">Comuníquese por WhatsApp</span>
+                <span class="popup-text bottom-text">Haga click en el número para hablar por WhatsApp</span>
+            </div>
+          </div>
+        <!-- Contenedor inferior (blanco) -->
+        <div class="popup-bottom">
+            <a href="https://wa.me/{{ whatsapp_number|default:'51963491548' }}?text=Hola%20me%20gustaría%20más%20información" 
+            target="_blank" class="popup-contact">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="popup-icon-small">
+            <div class="popup-contact-info">
+                <span class="contact-name">{{ name_contact|default:'Atención al cliente' }}</span>
+                <span class="contact-number">{{ whatsapp_number|default:'51963491548' }}</span>
+            </div>
+            </a>
+        </div>
+        </div>
+    </div>
+
+    <button id="btnArriba"><svg xmlns="http://www.w3.org/2000/svg" 
+        width="18" 
+        height="20" fill="currentColor" class="bi bi-chevron-double-up" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M7.646 2.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 3.707 2.354 9.354a.5.5 0 1 1-.708-.708z"/>
+        <path fill-rule="evenodd" d="M7.646 6.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 7.707l-5.646 5.647a.5.5 0 0 1-.708-.708z"/>
+      </svg></button>
+
+    {% block content %}
+
+    <!-- Start Banner Hero -->
+    <div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="0" class="active"></li>
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="1"></li>
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid img-slide-item" src="{% static 'assets/img/modasa-equipo-60.png' %}" alt="">
+                        </div>
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left align-self-center text-slide-item">
+                                <h1 class="h1 text-success"><b>Corporación</b> DAFC</h1>
+                                <h3 class="h2">Conoce más sobre nuestros productos y servicios.</h3>
+                                <p>
+                                    En Corporación DAFC, somos líderes en la distribución de 
+                                    maquinaria pesada de última generación, diseñada para enfrentar 
+                                    los desafíos más exigentes de la industria. Brindamos calidad, 
+                                    durabilidad y tecnología avanzada para potenciar tus proyectos.</a>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid img-slide-item" src="{% static 'assets/img/XAS-186.png' %}" alt="">
+                        </div>
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left text-slide-item">
+                                <h1 class="h1 text-success">Aliado en <b>Grandes Proyectos</b></h1>
+                                <h3 class="h2">Más que Maquinaria, Confianza</h3>
+                                <p>
+                                    Con más de <strong>10 años de experiencia</strong>, Corporación DAFC es tu socio 
+                                    estratégico en maquinaria pesada, repuestos y equipos especializados. 
+                                    Ofrecemos soluciones integrales respaldadas por un equipo técnico 
+                                    comprometido con tu éxito.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid img-slide-item" src="{% static 'assets/img/sullai.png' %}" alt="">
+                        </div>
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left text-slide-item">
+                                <h1 class="h1 text-success">Equipos que Impulsan el <b>Progreso</b></h1>
+                                <h3 class="h2">Contáctanos para una cotización personalizada.</h3>
+                                <p>
+                                    Proporcionamos no solo maquinaria pesada, sino también una amplia gama 
+                                    de productos industriales y soporte técnico personalizado. Ofrecemos 
+                                    soluciones integrales respaldadas por un equipo técnico comprometido 
+                                    con tu éxito.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="prev">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <a class="carousel-control-next text-decoration-none w-auto pe-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="next">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+    </div>
+    <!-- End Banner Hero -->
+
+    <!-- Sección de dos columnas debajo del carrusel -->
+    <section class="container-fluid seccion-infou">
+        <div class="row">
+            <!-- Columna Izquierda -->
+            <div class="col-12 col-md-6 left-column">
+              <h3 class="subtitle animate-up">Nos posicionamos en los sectores de minería, industria, agrícola y construcción.</h3>
+              <p class="text animate-up">
+                Nos enfocamos en aumentar la productividad de nuestro cliente brindándole <b>soluciones sostenibles</b> con productos y servicios innovadores.
+              </p>
+                <a href="{% url 'prov_categorias_produc' %}" class="cssbuttons-io-button animate-up">
+                    PRODUCTOS
+                    <div class="icon">
+                    <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path>
+                    </svg>
+                    </div>
+                </a>
+        
+            </div>
+            <!-- Columna Derecha -->
+            <div class="col-12 col-md-6 right-column">
+              <h3 class="subtitle animate-up">Calidad de Servicio</h3>
+              <p class="text animate-up">
+                Trabajamos para brindarles un servicio de post-venta óptimo con capacitaciones constantes para garantizar la plena satisfacción del trabajo realizado, ofreciéndoles un stock de repuestos originales y técnicos profesionales que llegarán a los lugares más remotos de acuerdo a los requerimientos del cliente.
+              </p>
+  
+                <a href="{% url 'about' %}" class="cssbuttons-io-button animate-up">
+                    NOSOTROS
+                    <div class="icon">
+                    <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path>
+                    </svg>
+                    </div>
+                </a>           
+            </div>
+          </div>
+    </section>
+      
+    <!-- Start Categories of The Month -->
+    <section class="container py-5">
+        <div class="row text-center pt-3 sec2">
+            <div class="col-lg-6 m-auto texto-animado">
+                <h1 class="h1 text-success"><b>Los más Pedidos</b></h1>
+                <p>
+                    Equipos y herramientas que marcan la diferencia en cada obra. Aquí tienes las máquinas más buscadas por su calidad y desempeño. 
+                </p>
+            </div>
+        </div>
+        <div class="row lopedido" style="margin-top: 40px;">
+            <!-- Tarjeta 1 -->
+            <div class="col-12 col-md-4 p-5 mt-3 d-flex justify-content-center">
+              <div class="cardddd">
+                <div class="first-content">
+                  <img src="{% static 'assets/img/20-modasa.png' %}" alt="Bulldozer" class="producto-img">
+                  <h5 class="text-producto">ELECTRÓGENO MP-20 MODASA</h5>
+                </div>
+                <div class="second-content">
+                  <div class="tarjeta-contenido">
+                    <p class="texto-producto">
+                        Grupos electrógenos diésel con un amplio rango de potencia, de hasta 3.000kVA. 
+                        Ofrecen una respuesta segura, potente y fiable a las necesidades energéticas cada vez 
+                        más exigentes.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+        
+            <!-- Tarjeta 2 -->
+            <div class="col-12 col-md-4 p-5 mt-3 d-flex justify-content-center">
+              <div class="cardddd">
+                <div class="first-content">
+                  <img src="{% static 'assets/img/compresor2.png' %}" alt="COMPRESOR PORTÁTIL 185DPQ" class="producto-img">
+                  <h5 class="text-producto">COMPRESOR SULLAIR 185DPQ</h5>
+                </div>
+                <div class="second-content">
+                  <div class="tarjeta-contenido">
+                    <p class="texto-producto">
+                        El Compresor Portátil Sullair 185DPQ es un equipo diésel compacto y resistente, 
+                        ideal para aplicaciones de construcción e industriales. Ofrece un flujo de 185 cfm 
+                        a 100 psi, con motor eficiente y sistema de control avanzado. 
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+        
+            <!-- Tarjeta 3 -->
+            <div class="col-12 col-md-4 p-5 mt-3 d-flex justify-content-center">
+              <div class="cardddd">
+                <div class="first-content">
+                  <img src="{% static 'assets/img/x88-atlas.png' %}" alt="Compactador" class="producto-img">
+                  <h5 class="text-producto">COMPRESOR - XAS 88 Kd</h5>
+                </div>
+                <div class="second-content">
+                  <div class="tarjeta-contenido">
+                    <p class="texto-producto">
+                      El compresor Atlas Copco XAS 88 KD PE es un compresor neumático remolcable, ligero y eficiente, 
+                      permitiendo fabricar compresores hasta 150 kg más ligeros que los modelos comparables.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </section>
+    <!-- End Categories of The Month -->
+
+
+    <!-- Start Featured Product -->
+    <section class="bg-light">
+        <div class="container py-5 animate-slide">
+            <div class="row text-center py-3 sec2" style="margin-bottom: 50px;">
+                <div class="col-lg-6 m-auto">
+                    <h1 class="h1">ENTREGAS A CLIENTES</h1>
+                    <p>
+                        Tu confianza nos motiva a seguir mejorando. Tu satisfacción es nuestra mayor recompensa. ¡Gracias por confiar en nosotros!
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Tarjeta Destacada 1 -->
+                <div class="col-12 col-md-4 mb-4 animate-slide card-destacados-1">
+                  <div class="destacados-card h-100">
+                    <a href="{% url 'shop-single' %}">
+                      <img src="{% static 'assets/img/cargador_juste1.png' %}" class="destacados-card-img" alt="Producto 1">
+                    </a>
+                    <div class="destacados-card-body">
+                      
+                      <a href="{% url 'shop-single' %}" class="destacados-card-title text-decoration-none">Gym Weight</a>
+                      <p class="destacados-card-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt in culpa qui officia deserunt.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <!-- Tarjeta Destacada 2 -->
+                <div class="col-12 col-md-4 mb-4 animate-slide card-destacados-2">
+                  <div class="destacados-card h-100">
+                    <a href="{% url 'shop-single' %}">
+                      <img src="{% static 'assets/img/bobcat_juste1.png' %}" class="destacados-card-img" alt="Producto 2">
+                    </a>
+                    <div class="destacados-card-body">
+                      
+                      <a href="{% url 'shop-single' %}" class="destacados-card-title text-decoration-none">Cloud Nike Shoes</a>
+                      <p class="destacados-card-text">
+                        Aenean gravida dignissim finibus. Nullam ipsum diam, posuere vitae pharetra sed, commodo ullamcorper.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <!-- Tarjeta Destacada 3 -->
+                <div class="col-12 col-md-4 mb-4 animate-slide card-destacados-3">
+                  <div class="destacados-card h-100">
+                    <a href="{% url 'shop-single' %}">
+                      <img src="{% static 'assets/img/dynapac_juste.jpg' %}" class="destacados-card-img" alt="Producto 3">
+                    </a>
+                    <div class="destacados-card-body">
+                      
+                      <a href="{% url 'shop-single' %}" class="destacados-card-title text-decoration-none">Summer Addides Shoes</a>
+                      <p class="destacados-card-text">
+                        Curabitur ac mi sit amet diam luctus porta. Phasellus pulvinar sagittis diam, et scelerisque ipsum lobortis nec.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+    </section>
+    <!-- End Featured Product -->
+
+    <!-- Start Brands -->
+    <section class="bg-light py-5">
+        <div class="container my-4">
+            <div class="row text-center py-3">
+                <div class="col-lg-6 m-auto">
+                    <h1 class="h2 text-success"><b>MARCAS DE RENOMBRE MUNDIAL</h1>
+                </div>
+                <div class="col-lg-9 m-auto tempaltemo-carousel">
+                    <div class="row d-flex flex-row">
+                        <!--Controls-->
+                        <div class="col-1 align-self-center">
+                            <a class="h1" href="#multi-item-example" role="button" data-bs-slide="prev">
+                                <i class="text-light fas fa-chevron-left"></i>
+                            </a>
+                        </div>
+                        <!--End Controls-->
+
+                        <!--Carousel Wrapper-->
+                        <div class="col">
+                            <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example" data-bs-ride="carousel">
+                                <!--Slides-->
+                                <div class="carousel-inner product-links-wap" role="listbox">
+
+                                    <!--First slide-->
+                                    <div class="carousel-item active">
+                                        <div class="row">
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_movil.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_cat.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_rnp.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_kubota.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--End First slide-->
+
+                                    <!--Second slide-->
+                                    <div class="carousel-item">
+                                        <div class="row">
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_kobelco.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_vistony.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_xingye.png' %}" alt="Brand Logo" style="width: 200px; height: 6    0px;"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_atlas.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--End Second slide-->
+
+                                    <!--Third slide-->
+                                    <div class="carousel-item">
+                                        <div class="row">
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_boart.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_pneumatic.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_dagartech.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/logo_euroflex2.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--End Third slide-->
+
+                                </div>
+                                <!--End Slides-->
+                            </div>
+                        </div>
+                        <!--End Carousel Wrapper-->
+
+                        <!--Controls-->
+                        <div class="col-1 align-self-center">
+                            <a class="h1" href="#multi-item-example" role="button" data-bs-slide="next">
+                                <i class="text-light fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                        <!--End Controls-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--End Brands-->
+
+    {% endblock %}
+
+    <!-- Start Footer -->
+    <footer id="tempaltemo_footer" style="background-color: #003a59;">
+        <div class="container">
+            <img src="{% static 'assets/img/logo-footer.png' %}" alt="aaa" style="width: 200px; height: 200px; margin-bottom: -80px;">
+            <div class="row">
+                <div class="col-md-4 pt-5 bordered-div">
+                    <h4 class="h4 fw-bold">OFICINA PRINCIPAL TRUJILLO</h4>
+                    <ul class="list-unstyled footer-link-list">
+                        <li class="text-footer">
+                            <i class="fas fa-map-marker-alt fa-fw"></i>
+                            Av. Mansiche #1131 – Urb. Santa Inés
+                        </li>
+                        
+                        <li class="text-footer1">
+                            <i class="fa fa-mobile fa-fw"></i>
+                            963 491 548 – 968 334 695
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-4 pt-5 bordered-div">
+                    <h4 class="h4 fw-bold">SUCURSAL PATAZ</h4>
+                    <ul class="list-unstyled footer-link-list">
+                        <li class="text-footer">
+                            <i class="fas fa-map-marker-alt fa-fw"></i>
+                            Pataz: Intersección de las calles San Pedro y Barrio Alto S/N
+                        </li>
+                        <li class="text-footer1">
+                            <i class="fa fa-mobile fa-fw"></i>
+                            964 252 837
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-4 pt-5 bordered-div">
+                    <h4 class="h4 fw-bold">SUCURSAL LLACUABAMBA</h4>
+                    <ul class="list-unstyled footer-link-list">
+                        <li class="text-footer">
+                            <i class="fas fa-map-marker-alt fa-fw"></i>
+                            Vía Evitamiento Nro. S/N sec. Las Chilcas C.P. Llaucabamba – Pataz – Parcoy
+                        </li>
+                        <li class="text-footer1">
+                            <i class="fa fa-mobile fa-fw"></i>
+                            914 268 954
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-4 pt-5 bordered-div">
+                    <h4 class="h4 fw-bold">SUCURSAL TAYABAMBA</h4>
+                    <ul class="list-unstyled footer-link-list">
+                        <li class="text-footer">
+                            <i class="fas fa-map-marker-alt fa-fw"></i>
+                            Jr. Bolívar Nro. 700
+                        </li>
+                        <li class="text-footer1">
+                            <i class="fa fa-mobile fa-fw"></i>
+                            983 060 185
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="row text-light mb-4">
+                <div class="col-12 mb-3">
+                    <div class="w-100 my-3 border-top border-light"></div>
+                </div>
+                <div class="col-auto me-auto">
+                    <ul class="list-inline text-left footer-icons">
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a class="text-light text-decoration-none" target="_blank" href="https://www.facebook.com/people/DAFC-Corporaci%C3%B3n/100089856699765/"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
+                        </li>
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/resurge_corporation_eirl/?hl=es"><i class="fab fa-instagram fa-lg fa-fw"></i></a>
+                        </li>
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
+                        </li>
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a class="text-light text-decoration-none" target="_blank" href="https://www.linkedin.com/company/dafc-corporaci%C3%B3n/?originalSubdomain=pe"><i class="fab fa-linkedin fa-lg fa-fw"></i></a>
+                        </li>
+                    </ul>
+                </div>
+                <!--<div class="col-auto">
+                    <label class="sr-only" for="subscribeEmail">Email address</label>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email address">
+                        <div class="input-group-text btn-success text-light">Subscribe</div>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+
+        <div class="w-100 py-5" style="background-color: #002b44;">
+            <div class="container">
+                <div class="row pt-2">
+                    <div class="col-12 d-flex justify-content-between">
+                        <p class="text-left text-light fw-semibold" style="font-size: 16px;">
+                            Copyright &copy; 2025 RESURGE Corporation E.I.R.L. 
+                        </p>
+                        <p class="text-left text-light" style="font-size: 12px;"> 
+                            Diseño y desarrollo web: Cabrejos Alvarado
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </footer>
+    <!-- End Footer -->
+
+    <!-- Start Script -->
+    {% load static %}
+    <script src="{% static 'assets/js/jquery-1.11.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery-migrate-1.2.1.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/templatemo.js' %}"></script>
+    <script src="{% static 'assets/js/custom.js' %}"></script>
+    
+    <!-- End Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtén el menú "NOSOTROS"
+            const menuItem = document.querySelector('.nav-item.dropdown');
+    
+            // Variables para el estado del menú y el número de clics
+            let clickCount = 0;
+    
+            // Escucha el clic sobre la opción "NOSOTROS"
+            menuItem.addEventListener('click', function (e) {
+                e.stopPropagation(); // Evita la propagación del clic
+    
+                // Asegúrate de que es el primer clic en el menú
+                const submenu = menuItem.querySelector('.dropdown-menu');
+                if (submenu) {
+                    clickCount++;
+    
+                    if (clickCount === 1) {
+                        // Primer clic: mostrar el submenú
+                        submenu.style.display = 'block';
+                    } else if (clickCount === 2) {
+                        // Segundo clic: redirigir al enlace de "NOSOTROS"
+                        window.location.href = menuItem.querySelector('a').href;
+                    }
+                }
+            });
+    
+            // Cerrar el menú si se hace clic fuera del mismo
+            document.addEventListener('click', function () {
+                // Ocultar el submenú si se hace clic fuera del menú
+                const submenu = menuItem.querySelector('.dropdown-menu');
+                if (submenu) {
+                    submenu.style.display = 'none';
+                }
+                // Restablecer el contador de clics
+                clickCount = 0;
+            });
+        });
+    </script>
+
+    <!-- SCRIPT DE BURBUJA DE WSP -->
+
+    <script>
+       document.addEventListener("DOMContentLoaded", function(){
+            const bubble = document.getElementById("whatsappBubble");
+            const popup = document.getElementById("whatsappPopup");
+            const icon = document.getElementById("whatsappIcon");
+            const closeIcon = document.getElementById("closeIcon");
+
+            bubble.addEventListener("click", function(e) {
+                if(e.target.closest('.popup')) return;
+
+                popup.classList.toggle("active");
+
+                if(popup.classList.contains("active")) {
+                    icon.style.opacity = "0";
+                    closeIcon.classList.add("active");
+                } else {
+                    closeIcon.classList.remove("active");
+                    icon.style.opacity = "1";
+
+                    // Forzar redibujado para que la animación siempre funcione
+                    icon.classList.remove("rotate");
+                    void icon.offsetWidth; // Esto reinicia la animación
+                    icon.classList.add("rotate");
+                }
+            });
+        });
+    </script>
+
+    <!-- SCRIPT PARA BOTON HACIA ARRIBA -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var btnArriba = document.getElementById("btnArriba");
+
+            window.addEventListener("scroll", function () {
+                if (window.scrollY > 450) {
+                    btnArriba.classList.add("mostrar");
+                } else {
+                    btnArriba.classList.remove("mostrar");
+                }
+            });
+
+            btnArriba.addEventListener("click", function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+        });
+    </script>
+
+    <!-- Script para activar animaciones al hacer scroll -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        const animateElements = document.querySelectorAll('.animate-up');
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+            });
+        }, { threshold: 0.1 });
+        
+        animateElements.forEach(el => observer.observe(el));
+        });
+    </script>
+
+    <!-- SCRIPT PARA RESPONSIVE NAVBAR MOVIL -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+        // Solo aplica en vista móvil (ancho menor a 992px)
+        if(window.innerWidth < 992) {
+            const DOUBLE_CLICK_THRESHOLD = 500; // milisegundos
+
+            function handleToggle(e) {
+            // Comprobamos si existe un menú desplegable dentro del contenedor.
+            let menuEl = this.parentElement.querySelector('.dropdown-menu');
+            if (!menuEl) {
+                // No hay submenu (no tiene categorías), se permite la navegación normal.
+                return;
+            }
+
+            let now = Date.now();
+            let last = parseInt(this.dataset.lastClick) || 0;
+            let diff = now - last;
+            let isOpen = this.dataset.expanded === 'true';
+
+            if(!isOpen) {
+                // Primer clic: abrir el menú y evitar la redirección.
+                e.preventDefault();
+                menuEl.classList.add('show');
+                this.dataset.expanded = 'true';
+                this.dataset.lastClick = now;
+            } else {
+                // El menú ya está abierto.
+                if(diff < DOUBLE_CLICK_THRESHOLD) {
+                // Segundo clic rápido: redirigir.
+                this.dataset.expanded = 'false';
+                delete this.dataset.lastClick;
+                // Navegación programática.
+                window.location.href = this.href;
+                } else {
+                // Segundo clic lento: cerrar el menú sin redirigir.
+                e.preventDefault();
+                menuEl.classList.remove('show');
+                this.dataset.expanded = 'false';
+                this.dataset.lastClick = now;
+                }
+            }
+            }
+
+            // Asignar comportamiento a los enlaces de primer nivel que tienen submenú.
+            const parentDropdownLinks = document.querySelectorAll('.navbar .nav-item.dropdown > a.dropdown-toggle');
+            parentDropdownLinks.forEach(function(link) {
+            link.addEventListener('click', handleToggle);
+            link.addEventListener('touchend', handleToggle);
+            });
+
+            // Asignar comportamiento a los enlaces de submenú.
+            const submenuLinks = document.querySelectorAll('.dropdown-submenu > a');
+            submenuLinks.forEach(function(link) {
+            link.addEventListener('click', handleToggle);
+            link.addEventListener('touchend', handleToggle);
+            });
+
+            // Cerrar todos los menús si se hace clic fuera del navbar.
+            document.addEventListener('click', function(e) {
+            if (!e.target.closest('.navbar')) {
+                document.querySelectorAll('.dropdown-menu.show').forEach(function(menu){
+                menu.classList.remove('show');
+                });
+                document.querySelectorAll('[data-expanded="true"]').forEach(function(el){
+                el.dataset.expanded = 'false';
+                delete el.dataset.lastClick;
+                });
+            }
+            });
+        }
+        });
+
+    </script>
+
+    <!-- SCRIPT PARA RESPONSIVE NAVBAR WEB-->
+
+    <script> 
+    </script>
+
+    <!-- SCRIPT DE BUSCADOR MODAL -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        const inputSearch = document.getElementById("inputModalSearch");
+        const categoriasDiv = document.getElementById("sugerenciasCategorias");
+        const proveedoresDiv = document.getElementById("sugerenciasProveedores");
+        const productosDiv = document.getElementById("sugerenciasProductos");
+        const sugerenciasContainer = document.getElementById("sugerencias");
+    
+        // Función para ocultar el contenedor de sugerencias
+        function hideSuggestions() {
+            sugerenciasContainer.style.opacity = "0";
+            setTimeout(function() {
+            sugerenciasContainer.style.display = "none";
+            }, 500);
+        }
+    
+        // Función para mostrar el contenedor con animación (fade‑in)
+        function showSuggestions() {
+            sugerenciasContainer.style.display = "flex";  // Se usa flex para mantener la estructura de columnas
+            setTimeout(function() {
+            sugerenciasContainer.style.opacity = "1";
+            }, 10);
+        }
+    
+        function buscarSugerencias(query) {
+            // Si no hay término de búsqueda, se oculta el contenedor y se limpian los resultados
+            if (!query) {
+            categoriasDiv.innerHTML = "";
+            proveedoresDiv.innerHTML = "";
+            productosDiv.innerHTML = "";
+            hideSuggestions();
+            return;
+            }
+    
+            fetch(`/buscar-sugerencias/?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                // Limpiar resultados anteriores
+                categoriasDiv.innerHTML = "";
+                proveedoresDiv.innerHTML = "";
+                productosDiv.innerHTML = "";
+    
+                // Sección de Categorías
+                if (data.categorias && data.categorias.length > 0) {
+                data.categorias.forEach(item => {
+                    const link = document.createElement("a");
+                    // Cambiamos la URL para redirigir a la vista de búsqueda por categoría
+                    link.href = `/busqueda/categoria/${item.id}/`;
+                    link.classList.add("list-group-item", "p-1");
+                    link.textContent = item.nombre;
+                    categoriasDiv.appendChild(link);
+                });
+                } else {
+                const li = document.createElement("li");
+                li.classList.add("list-group-item", "p-1");
+                li.textContent = "No se encontraron categorías";
+                categoriasDiv.appendChild(li);
+                }
+    
+                // Sección de Proveedores
+                if (data.proveedores && data.proveedores.length > 0) {
+                data.proveedores.forEach(item => {
+                    const link = document.createElement("a");
+                    link.href = `/proveedor/${item.id}/`;
+                    link.classList.add("list-group-item", "p-1");
+                    link.textContent = item.nombre;
+                    proveedoresDiv.appendChild(link);
+                });
+                } else {
+                const li = document.createElement("li");
+                li.classList.add("list-group-item", "p-1");
+                li.textContent = "No se encontraron proveedores";
+                proveedoresDiv.appendChild(li);
+                }
+    
+                // Sección de Productos (tarjetas horizontales)
+                if (data.productos && data.productos.length > 0) {
+                data.productos.forEach(producto => {
+                    const col = document.createElement("div");
+                    col.classList.add("col-6", "mb-3");
+    
+                    const link = document.createElement("a");
+                    link.href = `/shopd/${producto.id}/`;
+                    link.classList.add("text-decoration-none");
+    
+                    // Creamos la tarjeta horizontal
+                    const card = document.createElement("div");
+                    card.classList.add("horizontal-card");
+    
+                    const img = document.createElement("img");
+                    if (producto.imagen) {
+                    img.src = `/media/${producto.imagen}`;
+                    } else {
+                    img.src = "/media/default.jpg";
+                    }
+                    img.alt = producto.nombre;
+    
+                    const cardInfo = document.createElement("div");
+                    cardInfo.classList.add("card-info");
+    
+                    const title = document.createElement("p");
+                    title.textContent = producto.nombre;
+    
+                    const brand = document.createElement("p");
+                    brand.textContent = producto.marca ? producto.marca : "Marca desconocida";
+    
+                    cardInfo.appendChild(title);
+                    cardInfo.appendChild(brand);
+                    card.appendChild(img);
+                    card.appendChild(cardInfo);
+                    link.appendChild(card);
+                    col.appendChild(link);
+                    productosDiv.appendChild(col);
+                });
+                } else {
+                const noResults = document.createElement("p");
+                noResults.classList.add("col-12");
+                noResults.textContent = "No se encontraron productos relacionados";
+                productosDiv.appendChild(noResults);
+                }
+    
+                // Mostrar contenedor con animación
+                showSuggestions();
+            });
+        }
+    
+        inputSearch.addEventListener("keyup", function() {
+            const query = inputSearch.value.trim();
+            buscarSugerencias(query);
+        });
+    
+        inputSearch.addEventListener("focus", function() {
+            const query = inputSearch.value.trim();
+            buscarSugerencias(query);
+        });
+        });
+    </script>
+    
+    <!-- SCRIPT DE BUSCADOR MOVIL -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const inputMobileSearch = document.getElementById("inputMobileSearch");
+            const mobileSuggestions = document.getElementById("mobileSuggestions");
+
+            // Función para ocultar el contenedor de sugerencias
+            function hideMobileSuggestions() {
+                mobileSuggestions.style.opacity = "0";
+                setTimeout(function() {
+                mobileSuggestions.style.display = "none";
+                }, 300);
+            }
+
+            // Función para mostrar el contenedor con animación (fade‑in)
+            function showMobileSuggestions() {
+                mobileSuggestions.style.display = "block";
+                setTimeout(function() {
+                mobileSuggestions.style.opacity = "1";
+                }, 10);
+            }
+
+            // Función para crear un encabezado de sección
+            function createSectionHeader(title) {
+                const header = document.createElement("div");
+                header.classList.add("mobile-section-header");
+                header.textContent = title;
+                return header;
+            }
+
+            // Función para crear un item de sugerencia (enlace)
+            function createSuggestionItem(text, href) {
+                const a = document.createElement("a");
+                a.href = href;
+                a.classList.add("list-group-item", "list-group-item-action");
+                a.textContent = text;
+                return a;
+            }
+
+            function buscarSugerenciasMobile(query) {
+                // Si no hay término, limpiar y ocultar sugerencias
+                if (!query) {
+                mobileSuggestions.innerHTML = "";
+                hideMobileSuggestions();
+                return;
+                }
+
+                fetch(`/buscar-sugerencias/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    mobileSuggestions.innerHTML = "";
+
+                    let hasSection = false;
+
+                    // Sección de Categorías
+                    if (data.categorias && data.categorias.length > 0) {
+                    hasSection = true;
+                    mobileSuggestions.appendChild(createSectionHeader("CATEGORÍAS"));
+                    data.categorias.forEach(item => {
+                        const a = createSuggestionItem(item.nombre, `/busqueda/categoria/${item.id}/`);
+                        mobileSuggestions.appendChild(a);
+                    });
+                    }
+
+                    // Sección de Proveedores
+                    if (data.proveedores && data.proveedores.length > 0) {
+                    hasSection = true;
+                    mobileSuggestions.appendChild(createSectionHeader("PROVEEDORES"));
+                    data.proveedores.forEach(item => {
+                        const a = createSuggestionItem(item.nombre, `/proveedor/${item.id}/`);
+                        mobileSuggestions.appendChild(a);
+                    });
+                    }
+
+                    // Sección de Productos Relacionados
+                    if (data.productos && data.productos.length > 0) {
+                    hasSection = true;
+                    mobileSuggestions.appendChild(createSectionHeader("PRODUCTOS RELACIONADOS"));
+                    data.productos.forEach(producto => {
+                        const a = createSuggestionItem(producto.nombre, `/shopd/${producto.id}/`);
+                        mobileSuggestions.appendChild(a);
+                    });
+                    }
+
+                    // Si no hay resultados en ninguna sección, mostramos un mensaje
+                    if (!hasSection) {
+                    const noResults = document.createElement("p");
+                    noResults.classList.add("list-group-item");
+                    noResults.textContent = "No se encontraron resultados";
+                    mobileSuggestions.appendChild(noResults);
+                    }
+
+                    showMobileSuggestions();
+                });
+            }
+
+            inputMobileSearch.addEventListener("keyup", function() {
+                const query = inputMobileSearch.value.trim();
+                buscarSugerenciasMobile(query);
+            });
+
+            inputMobileSearch.addEventListener("focus", function() {
+                const query = inputMobileSearch.value.trim();
+                buscarSugerenciasMobile(query);
+            });
+            });
+    </script>
+
+    <!-- SCRIPT PARA SECCION "LOS MÁS PEDIDOS "-->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const textos = document.querySelectorAll('.texto-animado');
+            const productos = document.querySelectorAll('.lopedido');
+        
+            const mostrarEnScroll = () => {
+
+                // Animar texto
+                textos.forEach(texto => {
+                    const rect = texto.getBoundingClientRect();
+                    const enVista = rect.top < window.innerHeight && rect.bottom >= 0;
+
+                    if (enVista) {
+                        texto.classList.add('visible');
+                    }
+                });
+
+                // Animar productos
+                productos.forEach(producto => {
+                    const rect = producto.getBoundingClientRect();
+                    const enVista = rect.top < window.innerHeight && rect.bottom >= 0;
+        
+                    if (enVista) {
+                        producto.classList.add('visible');
+                    }
+                });
+            };
+        
+            // Detectar el scroll y cargar las animaciones
+            window.addEventListener('scroll', mostrarEnScroll);
+        
+            // Ejecutar inmediatamente para productos visibles al cargar
+            mostrarEnScroll();
+        });
+    </script>
+
+    <!-- SCRIPT PARA PRODUCTOS DESTACADOS -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.querySelector(".container.animate-slide");
+            const cards = document.querySelectorAll(".animate-slide.card-destacados-1, .animate-slide.card-destacados-2, .animate-slide.card-destacados-3");
+        
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            if (entry.target === container) {
+                                entry.target.classList.add("show-container");
+        
+                                // Retrasar la animación de las tarjetas
+                                setTimeout(() => {
+                                    cards.forEach((card) => card.classList.add("show-card"));
+                                }, 600); // Tiempo de la animación del contenedor (0.8s)
+                            }
+                        }
+                    });
+                },
+                {
+                    threshold: 0.1,
+                }
+            );
+        
+            observer.observe(container);
+        });
+    </script>
+        
+</body>
+
+</html>

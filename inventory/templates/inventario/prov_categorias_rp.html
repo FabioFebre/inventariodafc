@@ -1,0 +1,294 @@
+{% extends 'inventario/index.html' %}
+
+{% block title %}
+    REPUESTOS Y LUBRICANTES - DAFC CORPORATION
+{% endblock %}
+
+{% load static %}
+
+{% block content %}
+
+<style>
+
+    /* Animación de fade-in con desplazamiento */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /*seccion proveedores-categorias tienda*/
+    .custom-cardpro .card {
+        width: 100%; /* El ancho se adapta al contenedor padre */
+        height: 300px; /* Define una altura fija para las tarjetas */
+        overflow: hidden; /* Oculta cualquier contenido que exceda el contenedor */       
+        border-radius: 8px !important; /* Esquinas ligeramente redondeadas */
+    }
+
+    .custom-cardpro .card img {
+        width: 100%; /* La imagen ocupa el ancho completo */
+        height: 100%; /* La imagen ocupa la altura completa */
+        /*object-fit: cover; /* Asegura que la imagen mantenga proporción y llene el espacio */
+    }
+
+    /* Estilo del contenedor del proveedor */
+    .custom-cardpro {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    /* Se activa la animación con un pequeño retraso */
+    .custom-cardpro.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    /* Imagen del proveedor */
+    .custom-cardpro img {
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    .custom-cardpro:hover img {
+        transform: scale(1.1); /* Efecto de zoom en la imagen */
+    }
+    
+    /* Contenedor de categorías */
+    .categories-overlay {
+        position: absolute;
+        bottom: -100%; /* Oculto inicialmente */
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.7); /* Fondo oscuro translúcido */
+        color: white;
+        padding: 10px;
+        transition: bottom 0.3s ease-in-out;
+        overflow: auto; /* Por si hay muchas categorías */
+        max-height: 100%;
+    }
+    
+    /* Mostrar categorías al hacer hover */
+    .custom-cardpro:hover .categories-overlay {
+        bottom: 0;
+    }
+    
+    /* Estilo de las categorías */
+    .categories-overlay h5 {
+        margin: 0 0 10px;
+        font-size: 1.1em;
+        text-align: center;
+    }
+    
+    .categories-overlay ul {
+        padding: 0;
+        list-style: none;
+        text-align: center;
+    }
+    
+    .categories-overlay ul li {
+        margin: 5px 0;
+    }
+
+    .categories-overlay a{
+        color: white !important;
+    }
+
+    .categories-overlay ul li a:hover {
+        color: #f8c146 !important; /* Color de hover para los enlaces */
+    }
+</style>
+    
+<div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <!--
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-inline shop-top-menu pb-3 pt-1">
+                            <li class="list-inline-item">
+                                <a class="h3 text-dark text-decoration-none mr-3" href="#">Todo</a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="h3 text-dark text-decoration-none mr-3" href="#"></a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="h3 text-dark text-decoration-none" href="#"></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 pb-4">
+                        <div class="d-flex">
+                            <select class="form-control">
+                                <option>Featured</option>
+                                <option>A to Z</option>
+                                <option>Artículo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                -->
+                <div class="row">
+                    {% for proveedor, categorias in proveedores_repuestos.items %}
+                    <div class="col-md-4 custom-cardpro">
+                        <div class="card mb-4 product-wap rounded-0">
+                            <div class="card rounded-0">
+                                {% if proveedor.imagen %}
+                                <img class="card-img rounded-0 img-fluid" src="{{ proveedor.imagen.url }}" alt="{{ proveedor.nombre }}">
+                                {% else %}
+                                    <p>Este proveedor no tiene imagen.</p>
+                                {% endif %}
+                                <!-- Contenedor de categorías -->
+                                <div class="categories-overlay">
+                                    <h5>CATEGORÍAS</h5>
+                                    <ul>
+                                        {% for categoria in categorias %}
+                                        <li><a href="{% url 'shop' proveedor.id categoria.id %}" style="text-decoration: none;">{{ categoria.nombre }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-center mb-0" style="font-weight: bold;">{{ proveedor.nombre }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No hay productos disponibles.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+</div>
+
+<!-- Start Brands --
+    <section class="bg-light py-5">
+        <div class="container my-4">
+            <div class="row text-center py-3">
+                <div class="col-lg-6 m-auto">
+                    <h1 class="h1">Our Brands</h1>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        Lorem ipsum dolor sit amet.
+                    </p>
+                </div>
+                <div class="col-lg-9 m-auto tempaltemo-carousel">
+                    <div class="row d-flex flex-row">
+                        --Controls--
+                        <div class="col-1 align-self-center">
+                            <a class="h1" href="#multi-item-example" role="button" data-bs-slide="prev">
+                                <i class="text-light fas fa-chevron-left"></i>
+                            </a>
+                        </div>
+                        !--End Controls--
+
+                        !--Carousel Wrapper--
+                        <div class="col">
+                            <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="multi-item-example" data-bs-ride="carousel">
+                                !--Slides--
+                                <div class="carousel-inner product-links-wap" role="listbox">
+
+                                    !--First slide--
+                                    <div class="carousel-item active">
+                                        <div class="row">
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_01.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_02.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_03.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_04.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    !--End First slide--
+
+                                    !--Second slide--
+                                    <div class="carousel-item">
+                                        <div class="row">
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_01.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_02.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_03.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_04.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    !--End Second slide--
+
+                                    !--Third slide--
+                                    <div class="carousel-item">
+                                        <div class="row">
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_01.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_02.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_03.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_04.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    !--End Third slide--
+                                </div>
+                                !--End Slides--
+                            </div>
+                        </div>
+                        !--End Carousel Wrapper--
+
+                        !--Controls--
+                        <div class="col-1 align-self-center">
+                            <a class="h1" href="#multi-item-example" role="button" data-bs-slide="next">
+                                <i class="text-light fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                        !--End Controls--
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+-->
+<!--End Brands-->
+<!-- End Script -->
+
+    <!-- JavaScript para animaciones en secuencia -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let elements = document.querySelectorAll(".custom-cardpro");
+
+        let observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add("show");
+                    }, index * 200); // Retraso progresivo de 200ms entre cada tarjeta
+                }
+            });
+        }, { threshold: 0.2 });
+
+        elements.forEach(element => {
+            observer.observe(element);
+        });
+    });
+</script>
+
+{% endblock %}

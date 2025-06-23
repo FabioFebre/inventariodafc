@@ -1,0 +1,448 @@
+{% extends 'inventario/index.html' %}
+
+{% block title %}
+    NOSOTROS - DAFC CORPORATION
+{% endblock %}
+
+{% load static %}
+
+{% block content %}
+    
+    <style>
+
+        /* From Uiverse.io by ashwin_5681 */ 
+        .card {
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: rgb(114, 114, 114);
+            text-align: center;
+        }
+
+        .card-text {
+            font-size: 15px;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slider {
+            width: 100%;
+            height: var(--height);
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent, #000 10% 90%, transparent);
+        }
+        .slider .list {
+            display: flex;
+            width: 100%;
+            min-width: calc(var(--width) * var(--quantity));
+            position: relative;
+        }
+        .slider .list .item {
+            width: var(--width);
+            height: var(--height);
+            position: absolute;
+            left: 100%;
+            animation: autoRun 10s linear infinite;
+            transition: filter 0.5s;
+            animation-delay: calc(
+                (10s / var(--quantity)) * (var(--position) - 1) - 20s
+            ) !important;
+        }
+
+        .slider .list .item img {
+            width: 100%;
+        }
+
+        @keyframes autoRun {
+            from {
+                left: 100%;
+            }
+            to {
+                left: calc(var(--width) * -1);
+            }
+        }
+        
+        .slider:hover .item {
+            animation-play-state: paused !important;
+            filter: grayscale(1);
+        }
+        .slider .item:hover {
+            filter: grayscale(0);
+        }
+        .slider[reverse="true"] .item {
+            animation: reversePlay 10s linear infinite;
+        }
+
+        @keyframes reversePlay {
+            from {
+                left: calc(var(--width) * -1);
+            }
+            to {
+                left: 100%;
+            }
+        }
+
+
+        /* 2.1. Animación del fondo de la sección */
+        .animate-section {
+            position: relative;
+            overflow: hidden;
+            background-color: transparent; /* Inicialmente transparente */
+        }
+        .animate-section::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #003a59; /* Color final deseado */
+            opacity: 0;
+            z-index: -1;
+            animation: bgFadeIn 0.5s forwards;
+        }
+        @keyframes bgFadeIn {
+            to { opacity: 1; }
+        }
+
+        /* 2.2. Estado inicial para los elementos animados */
+        .animate {
+            opacity: 0;
+        }
+
+        /* 2.3. Animaciones para el título, el texto y la imagen (con retraso de 1.5s) */
+        .animate-title.animate-active {
+            animation: slideInLeft 1s forwards;
+            animation-delay: 0.5s;
+        }
+        .animate-text.animate-active {
+            animation: slideInRight 1s forwards;
+            animation-delay: 0.5s;
+        }
+        .animate-image.animate-active {
+            animation: slideInUp 1s forwards;
+            animation-delay: 0.5s;
+        }
+
+        /* 2.4. Keyframes para cada animación */
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+    </style>
+
+    <section class="py-5 animate-section" style="background-color: transparent;">
+        <div class="container">
+            <div class="row align-items-center py-5">
+                <div class="col-md-8 text-white" >
+                    <h1 class="animate animate-title">Sobre Nosotros</h1>
+                    <p class="animate animate-text">
+                        CORPORACION DAFC, líder en la distribución y representantes de las mejores marcas a 
+                        nivel mundial en maquinaria y equipos, ofrecemos venta de repuestos 100% originales 
+                        y servicio post venta para los sectores de minería, construcción, agrícola, logística 
+                        e industrial.
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <div class="slider" style="--width: 200px; --height: 200px; --quantity: 6;">
+                        <div class="list">
+                            <div class="item" style="--position: 1">
+                                <div class="card" >
+                                    <img src="{% static 'assets/img/about-1.png' %}" alt="Imagen 2">
+                                </div>
+                            </div>
+                            <div class="item" style="--position: 2">
+                                <div class="card" >
+                                    <img src="{% static 'assets/img/about-2.png' %}" alt="Imagen 2">
+                                </div>
+                            </div>
+                            <div class="item" style="--position: 3">
+                                <div class="card" >
+                                    <img src="{% static 'assets/img/about-3.png' %}" alt="Imagen 2">
+                                </div>
+                            </div>
+                            <div class="item" style="--position: 4">
+                                <div class="card">
+                                    <img src="{% static 'assets/img/about-4.png' %}" alt="Imagen 2">
+                                </div>
+                            </div>
+                            <div class="item" style="--position: 5">
+                                <div class="card">
+                                    <img src="{% static 'assets/img/about-5.png' %}" alt="Imagen 2">
+                                </div>
+                            </div>  
+                            <div class="item" style="--position: 6">
+                                <div class="card">
+                                    <img src="{% static 'assets/img/about-6.png' %}" alt="Imagen 6">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <!-- From Uiverse.io by ashwin_5681 --> 
+        
+
+    </section>
+    <!-- Close Banner -->
+
+    <section class="">
+        <div class="container py-5 animate-slide">
+            <div class="row text-center py-3 sec2" style="margin-bottom: 50px;">
+                <div class="col-lg-6 m-auto">
+                    <h1 class="h1">Pilares de Nuestra Organización</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-4 mb-4 animate-slide card-1">
+                    <div class="card h-100 text-center shadow-sm" style="border-radius: 15px; background-color: #f2f6ff; border-color: #f2f6ff ; padding: 20px;">
+                        <div class="card-body">
+                            <img src="{% static 'assets/img/icon-hands.png' %}" alt="Icono Hands" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                            <h2 class="h5 text-dark">MISIÓN</h2>
+                            <p class="card-text">
+                                Somos una empresa comprometida en superar las expectativas de nuestros clientes, 
+                                apoyándolos en cada etapa de sus proyectos, desde la compra hasta el mantenimiento 
+                                y la reparación. Contamos con un equipo de profesionales capacitados y apasionados 
+                                por su trabajo, que se esfuerzan por ofrecer un servicio personalizado y soluciones 
+                                adaptadas a las necesidades específicas de cada cliente.
+                            </p>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 mb-4 animate-slide card-2">
+                    <div class="card h-100 text-center shadow-sm" style="border-radius: 15px; background-color: #f2f6ff; border-color: #f2f6ff; padding: 20px;">
+                        <div class="card-body">
+                            <img src="{% static 'assets/img/icon-eye.png' %}" alt="Icono Eye" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                            <h2 class="h5 text-dark">VISIÓN</h2>
+                            <p class="card-text ">
+                                Nuestra visión es construir relaciones duraderas y basadas en la confianza con 
+                                nuestros clientes y proveedores, al proporcionar no solo productos y servicios 
+                                de calidad, sino también un soporte integral que asegure el óptimo funcionamiento 
+                                y la longevidad de cada máquina y equipo. Nos vemos como líderes en la industria, 
+                                innovando constantemente para mejorar nuestras ofertas y elevar la experiencia del 
+                                cliente a un nivel superior.
+                            </p>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 mb-4 animate-slide card-3">
+                    <div class="card h-100 text-center shadow-sm" style="border-radius: 15px; background-color: #f2f6ff; border-color: #f2f6ff; padding: 20px;">
+                        <div class="card-body">
+                            <img src="{% static 'assets/img/icon-valor.png' %}" alt="Icono Valor" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                            <h2 class="h5 text-dark">VALORES CORPORATIVOS</h2>
+                            <p class="card-text">Nuestro valores guían nuestro comportamiento y desiciones</p>
+                            <ul style="list-style-type: disc; list-style-position: inside; padding: 0; margin: 20px 0; display: inline-block; text-align: left;">
+                                <li style="margin-bottom: 10px; font-size: 16px;">INTEGRIDAD</li>
+                                <li style="margin-bottom: 10px; font-size: 16px;">COMPROMISO</li>
+                                <li style="margin-bottom: 10px; font-size: 16px;">TRABAJO EN EQUIPO</li>
+                                <li style="margin-bottom: 10px; font-size: 16px;">EXCELENCIA</li>
+                            </ul> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <!-- Start Section 
+    <section class="container py-5">
+        <div class="row text-center pt-5 pb-3">
+            <div class="col-lg-6 m-auto">
+                <h1 class="h1">Nuestros Servicios</h1>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    Lorem ipsum dolor sit amet.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6 col-lg-3 pb-5">
+                <div class="h-100 py-5 services-icon-wap shadow">
+                    <div class="h1 text-success text-center"><i class="fa fa-truck fa-lg"></i></div>
+                    <h2 class="h5 mt-4 text-center">Servicios de entrega</h2>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 pb-5">
+                <div class="h-100 py-5 services-icon-wap shadow">
+                    <div class="h1 text-success text-center"><i class="fas fa-exchange-alt"></i></div>
+                    <h2 class="h5 mt-4 text-center">Envío y devolución</h2>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 pb-5">
+                <div class="h-100 py-5 services-icon-wap shadow">
+                    <div class="h1 text-success text-center"><i class="fa fa-percent"></i></div>
+                    <h2 class="h5 mt-4 text-center">Promoción</h2>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 pb-5">
+                <div class="h-100 py-5 services-icon-wap shadow">
+                    <div class="h1 text-success text-center"><i class="fa fa-user"></i></div>
+                    <h2 class="h5 mt-4 text-center">Servicio 24 horas</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+    !-- End Section -->
+
+    <!-- Start Brands 
+    <section class="bg-light py-5">
+        <div class="container my-4">
+            <div class="row text-center py-3">
+                <div class="col-lg-6 m-auto">
+                    <h1 class="h1">Our Brands</h1>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        Lorem ipsum dolor sit amet.
+                    </p>
+                </div>
+                <div class="col-lg-9 m-auto tempaltemo-carousel">
+                    <div class="row d-flex flex-row">
+                    
+                        <div class="col-1 align-self-center">
+                            <a class="h1" href="#templatemo-slide-brand" role="button" data-bs-slide="prev">
+                                <i class="text-light fas fa-chevron-left"></i>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <div class="carousel slide carousel-multi-item pt-2 pt-md-0" id="templatemo-slide-brand" data-bs-ride="carousel">
+                                
+                                <div class="carousel-inner product-links-wap" role="listbox">
+
+                                    <div class="carousel-item active">
+                                        <div class="row">
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_01.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_02.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_03.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_04.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="row">
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_01.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_02.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_03.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_04.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="row">
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_01.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_02.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_03.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                            <div class="col-3 p-md-5">
+                                                <a href="#"><img class="img-fluid brand-img" src="{% static 'assets/img/brand_04.png' %}" alt="Brand Logo"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-1 align-self-center">
+                            <a class="h1" href="#templatemo-slide-brand" role="button" data-bs-slide="next">
+                                <i class="text-light fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const observerOptions = {
+                threshold: 0.5
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate').forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.querySelector(".container.animate-slide");
+            const cards = document.querySelectorAll(".animate-slide.card-1, .animate-slide.card-2, .animate-slide.card-3");
+        
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            if (entry.target === container) {
+                                entry.target.classList.add("show-container");
+        
+                                // Retrasar la animación de las tarjetas
+                                setTimeout(() => {
+                                    cards.forEach((card) => card.classList.add("show-card"));
+                                }, 600); // Tiempo de la animación del contenedor (0.8s)
+                            }
+                        }
+                    });
+                },
+                {
+                    threshold: 0.1,
+                }
+            );
+        
+            observer.observe(container);
+        });
+    </script>
+{% endblock %}

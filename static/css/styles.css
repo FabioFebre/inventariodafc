@@ -1,0 +1,28 @@
+/* Personalización del encabezado */
+* {
+    font-family: sans-serif;
+}
+/* Estilo general del encabezado */
+
+.header .info i {
+    font-size: 1.2rem; /* Tamaño del ícono */
+    margin-right: 10px; /* Espacio entre el ícono y el texto */
+}
+
+
+/* Estilo del carrusel */
+.carousel-caption {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.carousel-caption h1 {
+    font-size: 2.5rem;
+    color: white;
+}
+
+.carousel-caption p {
+    font-size: 1.2rem;
+    color: white;
+}

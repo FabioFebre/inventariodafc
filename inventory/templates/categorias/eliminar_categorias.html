@@ -1,0 +1,21 @@
+{% extends 'inventario/dasito.html' %}
+
+{% block title %}
+    Eliminar Categoría
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>¿Seguro que deseas eliminar esta categoría?</h1>
+    <div class="alert alert-warning">
+        <strong>Advertencia:</strong> Esta acción no se puede deshacer.
+    </div>
+
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    </form>
+    <a href="{% url 'categorias-list' %}" class="btn btn-secondary mt-3">Cancelar</a>
+</div>
+{% endblock %}

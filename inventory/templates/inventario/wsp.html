@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burbuja de WhatsApp</title>
+    <style>
+        /* Estilo de la burbuja flotante */
+        .whatsapp-bubble {
+            position: fixed; /* Fijo en la pantalla */
+            bottom: 30px; /* Distancia desde la parte inferior */
+            right: 30px; /* Distancia desde la derecha */
+            width: 60px;
+            height: 60px;
+            background-color: #25D366; /* Color oficial de WhatsApp */
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Asegura que esté encima del contenido */
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .whatsapp-bubble:hover {
+            transform: scale(1.1); /* Efecto de zoom al pasar el mouse */
+        }
+
+        .whatsapp-bubble img {
+            width: 35px;
+            height: 35px;
+        }
+
+        /* Cuadro emergente */
+        .popup {
+            position: absolute;
+            bottom: 80px; /* Coloca el cuadro encima de la burbuja */
+            right: 0;
+            width: 250px;
+            background-color: #25D366; /* Fondo con color de WhatsApp */
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            z-index: 1001; /* Más alto que la burbuja */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .popup::before {
+            content: "";
+            position: absolute;
+            bottom: -10px; /* Flecha debajo del cuadro */
+            right: 20px; /* Ajusta la posición horizontal */
+            border-width: 10px;
+            border-style: solid;
+            border-color: #25D366 transparent transparent transparent; /* Color de la flecha */
+        }
+
+        /* Mostrar el cuadro al pasar el mouse */
+        .whatsapp-bubble:hover .popup {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Título dentro del cuadro */
+        .popup h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: bold;
+            font-family: sans-serif;
+        }
+
+        /* Texto dentro del cuadro */
+        .popup p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            font-family: sans-serif;
+        }
+
+        .popup img {
+            width: 15px;
+            height: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenido de ejemplo -->
+    <div style="height: 140px; padding: 20px;">
+        <h1>Bienvenido a mi página</h1>
+        <p>Desplázate hacia abajo y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.</p>
+        <p>Este texto es solo un ejemplo para simular una página con mucho contenido.</p>
+    </div>
+    <div style="height: 140px; padding: 20px;">
+        <h1>Bienvenido a mi página</h1>
+        <p>Desplázate hacia abajo y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.</p>
+        <p>Este texto es solo un ejemplo para simular una página con mucho contenido.</p>
+    </div>
+    <div style="height: 140px; padding: 20px;">
+        <h1>Bienvenido a mi página</h1>
+        <p>Desplázate hacia abajo y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.</p>
+        <p>Este texto es solo un ejemplo para simular una página con mucho contenido.</p>
+    </div>
+    <div style="height: 140px; padding: 20px;">
+        <h1>Bienvenido a mi página</h1>
+        <p>Desplázate hacia abajo y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.</p>
+        <p>Este texto es solo un ejemplo para simular una página con mucho contenido.</p>
+    </div>
+    
+    <div style="height: 140px; padding: 20px;">
+        <h1>Bienvenido a mi página</h1>
+        <p>Desplázate hacia abajo y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.o y observa cómo la burbuja de WhatsApp permanece en su lugar.</p>
+        <p>Este texto es solo un ejemplo para simular una página con mucho contenido.</p>
+    </div>
+
+    <!-- Burbuja de WhatsApp -->
+    <div class="whatsapp-bubble">
+        <a href="https://wa.me/51999542168?text=Hola%20me%20gustaría%20más%20información" 
+           target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+        </a>
+        <!-- Cuadro emergente (popup) -->
+        <div class="popup">
+            <h3>¡Chatea con nosotros!</h3>
+            <p>Atendemos tus consultas de lunes a viernes, de 9:00 AM a 6:00 PM.</p>
+            {% load static %}
+            <p><img src="{% static 'assets/img/llamar.png' %}" alt="Llamar"> +51 999542168</p>
+        </div>
+    </div>
+</body>
+</html>
